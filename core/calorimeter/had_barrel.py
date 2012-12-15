@@ -24,8 +24,8 @@ class HAD_Barrel(calorimeter.Calorimeter):
         self.color_outer  = (0.7, 0.4, 0.2)
         self.transparency = 0.1
 
-        self.coalesce_first = 2.7857
-        self.coalesce_last = 4.7857
+        self.coalesce_first = 3.7857
+        self.coalesce_last = 5.7857
 
         coalesce_wait = (self.coalesce_last - self.coalesce_first)/self.n_z
         

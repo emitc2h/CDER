@@ -24,8 +24,8 @@ class HAD_Endcaps(calorimeter.Calorimeter):
         self.color_outer  = (0.7, 0.4, 0.2)
         self.transparency = 0.1
 
-        self.coalesce_A = 2.5
-        self.coalesce_C = 3.1
+        self.coalesce_A = 3.5
+        self.coalesce_C = 6.0
 
         A_ring = ring.Ring((self.inner_radius,
                             self.outer_radius,
