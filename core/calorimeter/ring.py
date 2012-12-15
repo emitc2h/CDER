@@ -2,14 +2,12 @@ import cell
 import math
 
 ####################################################
-## A simple polyhedron with 8 faces that serves   ##
-## as the basic calorimeter cell. Arrange several ##
-## of these to determine calormeter geometry      ##
+## An assemblage of cells covering all phi        ##
 ####################################################
 
 class Ring():
 
-    def __init__(self, parameters, n, geometry):
+    def __init__(self, parameters, n, geometry, color_inner, color_outer, transparency = 0.3):
         """
         Constructor
         """
@@ -19,7 +17,10 @@ class Ring():
         self.radius_inner = parameters[0]
         self.radius_outer = parameters[1]
         self.z_center     = parameters[2]
-        self.z_width       = parameters[3]
+        self.z_width      = parameters[3]
+        self.color_inner  = color_inner
+        self.color_outer  = color_outer
+        self.transparency = transparency
         self.n = n
         self.cells = []
 
@@ -44,7 +45,10 @@ class Ring():
                                   self.z_width,
                                   phi_center,
                                   phi_width),
-                                  self.geometry)
+                                  self.geometry,
+                                  self.color_inner,
+                                  self.color_outer,
+                                  self.transparency)
 
             self.cells.append(new_cell)
 

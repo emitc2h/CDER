@@ -13,7 +13,7 @@ GEO_CYLINDRICAL = 'cylindrical'
 
 class Cell():
 
-    def __init__(self, parameters, geometry):
+    def __init__(self, parameters, geometry, color_inner, color_outer, transparency = 0.3):
         """
         Constructor
         """
@@ -42,9 +42,9 @@ class Cell():
             self.phi_width    = parameters[5]
             self.calculate_coordinates_cylindrical()
 
-        self.color_outer = (0.2, 0.4, 0.7)
-        self.color_inner = (0.1, 0.2, 0.35)
-        self.transparency = 0.5
+        self.color_outer = color_outer #(0.2, 0.4, 0.7)
+        self.color_inner = color_inner #(0.1, 0.2, 0.35)
+        self.transparency = transparency
 
             
     def calculate_coordinates_projective(self):

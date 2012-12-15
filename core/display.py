@@ -22,7 +22,7 @@ class Display(pyglet.window.Window):
 
         self.mouse_y_rotation = 0.0
         self.mouse_z_rotation = 0.0
-        self.mouse_zoom = 3.0
+        self.mouse_zoom = 4.0
 
         self.objects = objects
         
@@ -34,8 +34,8 @@ class Display(pyglet.window.Window):
         """
         Setup the window size, and OpenGL drawing area
         """
-        self.width=800
-        self.height=600
+        self.width=640
+        self.height=480
         self.init(self.width, self.height)
         pyglet.clock.schedule_interval(self.update, 1/30.0)
 
