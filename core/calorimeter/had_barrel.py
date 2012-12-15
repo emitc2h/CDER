@@ -19,7 +19,7 @@ class HAD_Barrel(calorimeter.Calorimeter):
         self.outer_radius = 0.96
         self.max_abs_z    = 0.9
         self.n_z          = 7
-        self.n_phi        = 16
+        self.n_phi        = 10
         self.color_inner  = (0.35, 0.2, 0.1)
         self.color_outer  = (0.7, 0.4, 0.2)
         self.transparency = 0.1

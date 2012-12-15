@@ -19,7 +19,7 @@ class EM_Barrel(calorimeter.Calorimeter):
         self.outer_radius = 0.7
         self.max_abs_eta  = 0.9
         self.n_eta        = 7
-        self.n_phi        = 16
+        self.n_phi        = 10
         self.color_inner  = (0.1, 0.2, 0.35)
         self.color_outer  = (0.2, 0.4, 0.7)
         self.transparency = 0.3
