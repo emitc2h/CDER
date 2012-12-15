@@ -3,7 +3,7 @@ What is this?
 
 A high-level event visualiser interfacing ROOT ntuples
 of a pre-determined format to an OpenGL graphics display.
-This package depends on ROOT, pyglet, py-lepton and PyOpenGL.
+This package depends on ROOT, pyglet, py-lepton and PyOpenGL::
 
     http://root.cern.ch/drupal/
     http://www.pyglet.org/
