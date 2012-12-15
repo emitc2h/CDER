@@ -1,5 +1,6 @@
 from pyglet.gl import *
 from ..utils import *
+import math
 
 ####################################################
 ## A simple polyhedron with 8 faces that serves   ##
@@ -45,6 +46,8 @@ class Cell():
         self.color_outer = color_outer #(0.2, 0.4, 0.7)
         self.color_inner = color_inner #(0.1, 0.2, 0.35)
         self.transparency = transparency
+
+        self.distance = 0.0
 
             
     def calculate_coordinates_projective(self):
@@ -94,8 +97,14 @@ class Cell():
         self.inner_3 = cyl_to_cart(raw_inner_3)
         self.inner_4 = cyl_to_cart(raw_inner_4)
 
-        
+
     def draw(self):
+
+        ## Add distance from the z-axis
+        move_x = self.distance*math.cos(self.phi_center)
+        move_y = self.distance*math.sin(self.phi_center)
+        
+        glTranslatef(move_x, move_y, 0.0)
 
         glBegin(GL_QUADS)
 
@@ -146,6 +155,8 @@ class Cell():
         glVertex3f( self.inner_3[0], self.inner_3[1], self.inner_3[2] )
 
         glEnd()
+
+        glTranslatef(-move_x, -move_y, 0.0)
 
 
 

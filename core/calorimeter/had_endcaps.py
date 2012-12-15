@@ -1,4 +1,5 @@
 import calorimeter, ring, cell
+import pyglet
 import math
 
 ####################################################
@@ -23,22 +24,31 @@ class HAD_Endcaps(calorimeter.Calorimeter):
         self.color_outer  = (0.7, 0.4, 0.2)
         self.transparency = 0.1
 
-        self.rings.append(ring.Ring((self.inner_radius,
-                                     self.outer_radius,
-                                     self.max_abs_z,
-                                     self.z_width),
-                                    self.n_phi,
-                                    cell.GEO_CYLINDRICAL,
-                                    self.color_inner,
-                                    self.color_outer,
-                                    self.transparency))
+        self.coalesce_A = 2.5
+        self.coalesce_C = 3.1
 
-        self.rings.append(ring.Ring((self.inner_radius,
-                                     self.outer_radius,
-                                     -self.max_abs_z,
-                                     self.z_width),
-                                    self.n_phi,
-                                    cell.GEO_CYLINDRICAL,
-                                    self.color_inner,
-                                    self.color_outer,
-                                    self.transparency))
+        A_ring = ring.Ring((self.inner_radius,
+                            self.outer_radius,
+                            self.max_abs_z,
+                            self.z_width),
+                            self.n_phi,
+                            cell.GEO_CYLINDRICAL,
+                            self.color_inner,
+                            self.color_outer,
+                            self.transparency)
+
+        pyglet.clock.schedule_once(A_ring.set_in_motion, self.coalesce_A)
+        
+        C_ring =ring.Ring((self.inner_radius,
+                           self.outer_radius,
+                           -self.max_abs_z,
+                           self.z_width),
+                           self.n_phi,
+                           cell.GEO_CYLINDRICAL,
+                           self.color_inner,
+                           self.color_outer,
+                           self.transparency)
+
+        pyglet.clock.schedule_once(C_ring.set_in_motion, self.coalesce_C)
+
+        self.rings = [A_ring, C_ring]

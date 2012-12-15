@@ -21,6 +21,8 @@ class Ring():
         self.color_inner  = color_inner
         self.color_outer  = color_outer
         self.transparency = transparency
+        self.in_motion = False
+        self.distance = 100.0
         self.n = n
         self.cells = []
 
@@ -52,6 +54,20 @@ class Ring():
 
             self.cells.append(new_cell)
 
+
+    def update(self, dt):
+        if not self.in_motion:
+            return
+        self.distance -= 1.0*(math.log(1.001+0.2*self.distance))
+        if self.distance < 0.0:
+            self.distance = 0.0
+            self.in_motion = False
+
+
+    def set_in_motion(self, dt):
+        self.distance = 10.0
+        self.in_motion = True
+    
             
     def draw(self):
         """
@@ -59,5 +75,6 @@ class Ring():
         """
 
         for c in self.cells:
+            c.distance = self.distance
             c.draw()
             

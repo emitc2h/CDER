@@ -19,4 +19,10 @@ class Calorimeter():
 
         for ring in self.rings:
             ring.draw()
+
+            
+    def update(self, dt):
+
+        for ring in self.rings:
+            ring.update(dt)
         

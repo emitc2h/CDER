@@ -20,7 +20,7 @@ class Display(pyglet.window.Window):
         config = Config(sample_buffers=1, samples=4, depth_size=16, double_buffer=True)
         super(Display, self).__init__(resizable=True, config=config)
 
-        self.mouse_y_rotation = 0.0
+        self.mouse_y_rotation = 54.0
         self.mouse_z_rotation = 0.0
         self.mouse_zoom = 4.0
 
@@ -75,6 +75,11 @@ class Display(pyglet.window.Window):
 
     ## ---------------------------------------- ##
     def update(self, dt):
+        
+        ## Draw objects
+        for obj in self.objects:
+            obj.update(dt)
+        
         self.draw()
 
 
