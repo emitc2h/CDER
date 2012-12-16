@@ -14,7 +14,7 @@ import math
 class Display(pyglet.window.Window):
 
     ## --------------------------------------- ##
-    def __init__(self, objects):
+    def __init__(self, calorimeters):
         """
         Constructor
         """
@@ -25,7 +25,7 @@ class Display(pyglet.window.Window):
         self.mouse_z_rotation = -20.0
         self.mouse_zoom = 4.0
 
-        self.objects = objects
+        self.calorimeters = calorimeters
         
         self.setup()
 
@@ -59,8 +59,6 @@ class Display(pyglet.window.Window):
             if self.mouse_y_rotation < -180.0:
                 self.mouse_y_rotation = self.mouse_y_rotation + 360.0
 
-            print self.mouse_y_rotation
-
 
     # ---------------------------------------- ##
     def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
@@ -85,9 +83,9 @@ class Display(pyglet.window.Window):
     ## ---------------------------------------- ##
     def update(self, dt):
         
-        ## Draw objects
-        for obj in self.objects:
-            obj.update(dt)
+        ## Draw calorimeters
+        for calo in self.calorimeters:
+            calo.update(dt)
         
         self.draw()
 
@@ -160,22 +158,18 @@ class Display(pyglet.window.Window):
         glRotatef(self.mouse_y_rotation, 0.0, 1.0, 0.0)
 
         y_rotation_rad = self.mouse_y_rotation*math.pi / 180.0
-        z_rotation_rad = self.mouse_z_rotation*math.pi / 180.0 - math.pi/2
+        z_rotation_rad = self.mouse_z_rotation*math.pi / 180.0
 
         if y_rotation_rad > 0:
-            z_rotation_rad = -z_rotation_rad
+            z_rotation_rad = -z_rotation_rad - math.pi
         
         glRotatef(self.mouse_z_rotation, math.cos(y_rotation_rad), 0.0, math.sin(y_rotation_rad))
-
-        reverse_draw_order = False
-        if abs(self.mouse_y_rotation) > 90.0:
-            reverse_draw_order = True
             
         ## Draw objects
-        for obj in self.objects:
-            obj.reverse_draw_order = reverse_draw_order
-            obj.cell_phi_draw_first = z_rotation_rad
-            obj.draw()
+        for calo in self.calorimeters:
+            calo.y_perspective = y_rotation_rad
+            calo.cell_phi_draw_first = z_rotation_rad
+            calo.draw()
 
 
     ## ---------------------------------------- ##

@@ -13,20 +13,24 @@ class Calorimeter():
         """
 
         self.rings = []
-        self.reverse_draw_order = False
+        self.y_perspective = 0.0
+        self.r_perspective = 0.0
         self.cell_phi_draw_first = 0.0
 
 
     def draw(self):
 
-        if self.reverse_draw_order:
-            for ring in reversed(self.rings):
-                ring.cell_phi_draw_first = self.cell_phi_draw_first
-                ring.draw()
-        else:
-            for ring in self.rings:
-                ring.cell_phi_draw_first = self.cell_phi_draw_first
-                ring.draw()
+		for ring in self.rings:
+			if ring.y_angle > abs(self.y_perspective):
+				ring.cell_phi_draw_first = self.cell_phi_draw_first
+				ring.draw()
+
+		for ring in reversed(self.rings):
+			if ring.y_angle <= abs(self.y_perspective):
+				ring.cell_phi_draw_first = self.cell_phi_draw_first
+				ring.draw()
+
+
 
             
     def update(self, dt):
