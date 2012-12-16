@@ -6,7 +6,7 @@ from core.calorimeter import em, had
 import math
 
 objects = [em.EM_Calorimeter(),
-		   had.HAD_Calorimeter()]
+           had.HAD_Calorimeter()]
 
 
 ####################################################

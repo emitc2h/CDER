@@ -4,6 +4,7 @@ from pyglet.window import key
 from pyglet.window import mouse
 import lepton
 import math
+import utils
 
 ####################################################
 ## A class inheriting from the pyglet window      ##
@@ -116,7 +117,7 @@ class Display(pyglet.window.Window):
         glMatrixMode(GL_PROJECTION)
         
         glEnable(GL_BLEND)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
         glHint(GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST);
 
@@ -157,18 +158,26 @@ class Display(pyglet.window.Window):
 
         glRotatef(self.mouse_y_rotation, 0.0, 1.0, 0.0)
 
-        y_rotation_rad = self.mouse_y_rotation*math.pi / 180.0
-        z_rotation_rad = self.mouse_z_rotation*math.pi / 180.0
-
-        if y_rotation_rad > 0:
-            z_rotation_rad = -z_rotation_rad - math.pi
+        phi_camera = self.mouse_y_rotation*math.pi / 180.0
+        theta_camera = self.mouse_z_rotation*math.pi / 180.0
         
-        glRotatef(self.mouse_z_rotation, math.cos(y_rotation_rad), 0.0, math.sin(y_rotation_rad))
-            
+        glRotatef(self.mouse_z_rotation, math.cos(phi_camera), 0.0, math.sin(phi_camera))
+
+        ## Figure out the z angle in the calorimeter cylindrical coordinate system
+        theta_camera += math.pi/2
+        
+        theta_calo, phi_calo = utils.sphy_to_sphz(theta_camera, phi_camera) 
+
+        #print theta_camera, theta_calo, phi_camera, phi_calo
+
+        if phi_camera > 0:
+            theta_camera = -theta_camera
+        
         ## Draw objects
         for calo in self.calorimeters:
-            calo.y_perspective = y_rotation_rad
-            calo.cell_phi_draw_first = z_rotation_rad
+            calo.theta_camera = theta_calo
+            calo.r_camera = self.mouse_zoom
+            calo.phi_camera = theta_camera - math.pi/2
             calo.draw()
 
 

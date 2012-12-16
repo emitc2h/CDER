@@ -20,13 +20,21 @@ class Ring():
         self.radius_outer = parameters[1]
         self.z_center     = parameters[2]
         self.z_width      = parameters[3]
-        self.y_angle      = math.atan2(self.z_center/9, self.radius_inner) + math.pi/2
+
         self.color_inner  = color_inner
         self.color_outer  = color_outer
         self.transparency = transparency
+        
         self.in_motion = False
         self.distance = 100.0
-        self.cell_phi_draw_first = 0.0
+        
+        self.phi_camera = 0.0
+
+        if abs(self.z_center) < 1e-10:
+            self.y_angle  = 0.0
+        else:
+            self.y_angle  = math.atan2(self.z_center-self.z_width/2,
+                                       self.radius_outer)
         self.n = n
         self.cells = []
 
@@ -79,12 +87,12 @@ class Ring():
         """
 
         cell_iterator = cycle(self.cells)
-        cell_iterator = dropwhile(lambda cell: delta_phi(cell.phi_center, self.cell_phi_draw_first) > cell.phi_width,
+        cell_iterator = dropwhile(lambda cell: delta_phi(cell.phi_center, self.phi_camera) > cell.phi_width,
 								  cell_iterator)
         cell_iterator = islice(cell_iterator, None, self.n)
 
         ordered_cells = list(cell_iterator)
-        
+
         for i in range(self.n):
             ## Figure out order of creation for transparency
             a = (i+1)/2

@@ -99,5 +99,24 @@ def inabspi(phi):
 
 def delta_phi(phi1, phi2):
 	return min(in2pi(phi1 - phi2), in2pi(phi2 - phi1))
+
+
+def deg_to_rad(angle):
+    return angle * math.pi/180.0
+
+def rad_to_deg(angle):
+    return angle * 180.0/math.pi
+
+
+def sphy_to_sphz(theta, phi):
+
+    x = math.cos(theta)
+    z = math.cos(phi)*math.sin(theta)
+    y = math.sin(phi)*math.sin(theta)
+
+    new_phi = math.atan2(y, x)
+    new_theta = math.acos(z)
+
+    return new_theta, new_phi
 	
     
