@@ -19,7 +19,7 @@ class EM_Endcaps(calorimeter.Calorimeter):
         self.outer_radius = 0.56
         self.max_abs_z    = 0.8
         self.z_width      = 0.2
-        self.n_phi        = 5
+        self.n_phi        = 6
         self.color_inner  = (0.1, 0.2, 0.35)
         self.color_outer  = (0.2, 0.4, 0.7)
         self.transparency = 0.3

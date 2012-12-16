@@ -20,8 +20,8 @@ class Display(pyglet.window.Window):
         config = Config(sample_buffers=1, samples=4, depth_size=16, double_buffer=True)
         super(Display, self).__init__(resizable=True, config=config)
 
-        self.mouse_y_rotation = 54.0
-        self.mouse_z_rotation = 0.0
+        self.mouse_y_rotation = -57.0
+        self.mouse_z_rotation = -20.0
         self.mouse_zoom = 4.0
 
         self.objects = objects
@@ -147,7 +147,10 @@ class Display(pyglet.window.Window):
                    0.0,  1.0,  0.0 )
 
         glRotatef(self.mouse_y_rotation, 0.0, 1.0, 0.0)
-        glRotatef(self.mouse_z_rotation, 0.0, 0.0, 1.0)
+
+        y_rotation_rad = self.mouse_y_rotation*math.pi / 180.0
+        
+        glRotatef(self.mouse_z_rotation, math.cos(y_rotation_rad), 0.0, math.sin(y_rotation_rad))
 
         ## Draw objects
         for obj in self.objects:
