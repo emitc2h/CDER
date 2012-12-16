@@ -75,4 +75,19 @@ def cyl_to_cart(cyl_point):
     y = r*math.sin(phi)
 
     return (x, y, z)
+
+
+def in2pi(phi):
+	"""
+	Take all phi values within 2*pi
+    """
+    
+	while phi >= 2*math.pi : phi -= 2*math.pi
+	while phi <  0.0       : phi += 2*math.pi
+	return phi
+
+
+def delta_phi(phi1, phi2):
+	return min(in2pi(phi1 - phi2), in2pi(phi2 - phi1))
+	
     

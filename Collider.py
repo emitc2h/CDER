@@ -2,13 +2,11 @@ import pyglet
 
 ####################################################
 ## Instantiate objects
-from core.calorimeter import em_barrel, em_endcaps, had_barrel, had_endcaps
+from core.calorimeter import em, had
 import math
 
-objects = [em_barrel.EM_Barrel(),
-           em_endcaps.EM_Endcaps(),
-           had_barrel.HAD_Barrel(),
-           had_endcaps.HAD_Endcaps()]
+objects = [em.EM_Calorimeter(),
+		   had.HAD_Calorimeter()]
 
 
 ####################################################

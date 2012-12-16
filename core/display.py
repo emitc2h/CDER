@@ -2,6 +2,7 @@ import pyglet
 from pyglet.gl import *
 from pyglet.window import key
 from pyglet.window import mouse
+import lepton
 import math
 
 ####################################################
@@ -51,6 +52,14 @@ class Display(pyglet.window.Window):
 
             if self.mouse_z_rotation < -85.0:
                 self.mouse_z_rotation = -85.0
+
+            if self.mouse_y_rotation > 180.0:
+                self.mouse_y_rotation = self.mouse_y_rotation - 360.0
+
+            if self.mouse_y_rotation < -180.0:
+                self.mouse_y_rotation = self.mouse_y_rotation + 360.0
+
+            print self.mouse_y_rotation
 
 
     # ---------------------------------------- ##
@@ -109,7 +118,9 @@ class Display(pyglet.window.Window):
         glMatrixMode(GL_PROJECTION)
         
         glEnable(GL_BLEND)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE)
+
+        glHint(GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST);
 
         glLoadIdentity()
 
@@ -149,11 +160,21 @@ class Display(pyglet.window.Window):
         glRotatef(self.mouse_y_rotation, 0.0, 1.0, 0.0)
 
         y_rotation_rad = self.mouse_y_rotation*math.pi / 180.0
+        z_rotation_rad = self.mouse_z_rotation*math.pi / 180.0 - math.pi/2
+
+        if y_rotation_rad > 0:
+            z_rotation_rad = -z_rotation_rad
         
         glRotatef(self.mouse_z_rotation, math.cos(y_rotation_rad), 0.0, math.sin(y_rotation_rad))
 
+        reverse_draw_order = False
+        if abs(self.mouse_y_rotation) > 90.0:
+            reverse_draw_order = True
+            
         ## Draw objects
         for obj in self.objects:
+            obj.reverse_draw_order = reverse_draw_order
+            obj.cell_phi_draw_first = z_rotation_rad
             obj.draw()
 
 

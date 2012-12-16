@@ -1,5 +1,7 @@
 import cell
 import math
+from ..utils import delta_phi, in2pi
+from itertools import cycle, islice, dropwhile
 
 ####################################################
 ## An assemblage of cells covering all phi        ##
@@ -23,6 +25,7 @@ class Ring():
         self.transparency = transparency
         self.in_motion = False
         self.distance = 100.0
+        self.cell_phi_draw_first = 0.0
         self.n = n
         self.cells = []
 
@@ -35,7 +38,7 @@ class Ring():
         """
 
         full_delta_phi = 2*math.pi / float(self.n)
-        phi_width = 0.9*full_delta_phi
+        self.phi_width = 0.9*full_delta_phi
         
         for i in range(self.n):
 
@@ -46,7 +49,7 @@ class Ring():
                                   self.z_center,
                                   self.z_width,
                                   phi_center,
-                                  phi_width),
+                                  self.phi_width),
                                   self.geometry,
                                   self.color_inner,
                                   self.color_outer,
@@ -74,7 +77,13 @@ class Ring():
         Draw the ring
         """
 
-        for c in self.cells:
+        cell_iterator = cycle(self.cells)
+        cell_iterator = dropwhile(lambda cell: delta_phi(cell.phi_center, self.cell_phi_draw_first) > cell.phi_width,
+								  cell_iterator)
+        cell_iterator = islice(cell_iterator, None, self.n)
+
+        ordered_cells = list(cell_iterator)
+        
+        for c in ordered_cells:
             c.distance = self.distance
             c.draw()
-            
