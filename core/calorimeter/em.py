@@ -18,19 +18,19 @@ class EM_Calorimeter(calorimeter.Calorimeter):
 
         
         ## Barrel parameters
-        self.barrel_inner_radius = 0.6
-        self.barrel_outer_radius = 0.7
-        self.barrel_max_abs_eta  = 0.9
-        self.barrel_n_eta        = 7
+        self.barrel_inner_radius = 1.5
+        self.barrel_outer_radius = 1.95
+        self.barrel_max_abs_eta  = 1.475
+        self.barrel_n_eta        = 10
         self.barrel_n_phi        = 60
 
         
         ## Endcaps parameters
-        self.endcap_inner_radius = 0.16
-        self.endcap_outer_radius = 0.56
-        self.endcap_max_abs_z    = 0.8
-        self.endcap_z_width      = 0.2
-        self.endcap_n_phi        = 30
+        self.endcap_inner_radius = 0.4
+        self.endcap_outer_radius = 1.4
+        self.endcap_max_abs_z    = 4.3
+        self.endcap_z_width      = 0.6
+        self.endcap_n_phi        = 60
 
         
         ## Aspect, color and transparency
@@ -43,7 +43,7 @@ class EM_Calorimeter(calorimeter.Calorimeter):
         self.coalesce_A_side = 0.0
         self.coalesce_first = 0.2857
         self.coalesce_last = 2.2857
-        self.coalesce_C_side = 1.6
+        self.coalesce_C_side = 1.8
 
         coalesce_wait = (self.coalesce_last - self.coalesce_first)/self.barrel_n_eta
 

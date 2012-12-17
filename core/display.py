@@ -24,7 +24,7 @@ class Display(pyglet.window.Window):
 
         self.mouse_y_rotation = -57.0
         self.mouse_z_rotation = -20.0
-        self.mouse_zoom = 4.0
+        self.mouse_zoom = 15.0
 
         self.calorimeters = calorimeters
         self.particles = particles
@@ -70,10 +70,10 @@ class Display(pyglet.window.Window):
 
         self.mouse_zoom += 0.1*scroll_y
         
-        if self.mouse_zoom < 2.0:
-            self.mouse_zoom = 2.0
-        if self.mouse_zoom > 6.0:
-            self.mouse_zoom = 6.0
+        if self.mouse_zoom < 1.3:
+            self.mouse_zoom = 1.3
+        if self.mouse_zoom > 25.0:
+            self.mouse_zoom = 25.0
 
         
     ## ---------------------------------------- ##

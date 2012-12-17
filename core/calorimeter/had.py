@@ -18,19 +18,19 @@ class HAD_Calorimeter(calorimeter.Calorimeter):
 
 
         ## Barrel parameters
-        self.barrel_inner_radius = 0.74
-        self.barrel_outer_radius = 0.96
-        self.barrel_max_abs_z    = 0.9
-        self.barrel_n_z          = 7
+        self.barrel_inner_radius = 2.2
+        self.barrel_outer_radius = 3.8
+        self.barrel_max_abs_z    = 5.1
+        self.barrel_n_z          = 17
         self.barrel_n_phi        = 30
 
 
         ## Endcap parameters
-        self.endcap_inner_radius = 0.26
-        self.endcap_outer_radius = 0.96
-        self.endcap_max_abs_z    = 1.2
+        self.endcap_inner_radius = 0.4
+        self.endcap_outer_radius = 3.8
+        self.endcap_max_abs_z    = 5.4
         self.endcap_z_width      = 0.27
-        self.endcap_n_phi        = 15
+        self.endcap_n_phi        = 30
 
 
         ## Aspect, color and transparency
