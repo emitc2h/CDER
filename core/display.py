@@ -2,7 +2,7 @@ import pyglet
 from pyglet.gl import *
 from pyglet.window import key
 from pyglet.window import mouse
-import lepton
+from lepton import default_system as lepton_system
 import math
 import utils
 
@@ -43,7 +43,7 @@ class Display(pyglet.window.Window):
         self.height=480
         self.init()
         pyglet.clock.schedule_interval(self.update, self.refresh_rate)
-        pyglet.clock.schedule_interval(lepton.default_system.update, self.refresh_rate)
+        pyglet.clock.schedule_interval(lepton_system.update, self.refresh_rate)
 
 
     ## ---------------------------------------- ##
@@ -169,7 +169,7 @@ class Display(pyglet.window.Window):
         glRotatef(self.mouse_z_rotation, math.cos(phi_camera), 0.0, math.sin(phi_camera))
 
         ## Draw lepton particles
-        lepton.default_system.draw()
+        lepton_system.draw()
 
         ## Figure out the z angle in the calorimeter cylindrical coordinate system
         theta_camera += math.pi/2

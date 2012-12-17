@@ -71,6 +71,8 @@ class HAD_Calorimeter(calorimeter.Calorimeter):
         for i in range(self.barrel_n_z):
             z = self.barrel_max_abs_z - i*full_delta_z
 
+            if i==4 or i==12: continue
+
             new_ring =ring.Ring((self.barrel_inner_radius,
                                  self.barrel_outer_radius,
                                  z,

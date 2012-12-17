@@ -13,12 +13,6 @@ from lepton.controller import Gravity, Lifetime, Movement, Fader, ColorBlender
 class Beamline():
 
     def __init__(self):
-
-        glEnable(GL_BLEND)
-        glShadeModel(GL_SMOOTH)
-        glBlendFunc(GL_SRC_ALPHA,GL_ONE)
-        glHint(GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST);
-        glDisable(GL_DEPTH_TEST)
         
         self.spark_tex = image.load(os.path.join(os.path.dirname(__file__), 'flare3.png')).get_texture()
 
@@ -34,11 +28,11 @@ class Beamline():
             template=Particle(
                 position=(0,0,0), 
                 color=(1,1,1), 
-                size=(0.02,0.02,0)),
+                size=(0.06,0.06,0)),
             deviation=Particle(
-                position=(0.01,0.01,0.01), 
-                velocity=(0.75,0.75,0.75), 
-                size=(0.02,0.02,0),
+                position=(0.03,0.03,0.03), 
+                velocity=(2.25,2.25,2.25), 
+                size=(0.006,0.006,0),
                 age=1.5))
 
         self.fire_tex = image.load(os.path.join(os.path.dirname(__file__), 'puff.png')).get_texture()
@@ -55,11 +49,11 @@ class Beamline():
         self.fire_emitter = StaticEmitter(
             template=Particle(
                 position=(0,0,0), 
-                size=(0.02,0.02,0)),
+                size=(0.6,0.6,0)),
             deviation=Particle(
-                position=(0.02,0.02,0.02), 
-                velocity=(0.20,0.20,0.20), 
-                size=(0.05,0.05,0),
+                position=(0.06,0.06,0.06), 
+                velocity=(0.6,0.6,0.6), 
+                size=(0.15,0.15,0),
                 up=(0,0,math.pi*2), 
                 rotation=(0,0,math.pi*0.03),),
                 color=[(0.5,0,0), (0.5,0.5,0.5), (0.4,0.1,0.1), (0.85,0.3,0)],
