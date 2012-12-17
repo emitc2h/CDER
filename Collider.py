@@ -3,32 +3,34 @@ import pyglet
 ####################################################
 ## Instantiate objects
 from core.calorimeter import em, had
-import math
+objects = [em.EM_Calorimeter(),]
+#had.HAD_Calorimeter()]
 
-objects = [em.EM_Calorimeter(),
-           had.HAD_Calorimeter()]
+from core.particle import beamline
+particles = [beamline.Beamline()]
 
 
 ####################################################
 ## Instantiate Display
 from core.display import Display
+from pyglet.gl import *
 
-display = Display(objects)
+display = Display(objects, particles)
 display.clear()
 
 
 ####################################################
 ## Drawing handler
-from pyglet.gl import *
 
 @display.event
 def on_draw():
     display.clear()
+    glLoadIdentity()
+
 
         
 ####################################################
 ## Run pyglet:
-
 if __name__ == '__main__':
     display.set_visible(True)
     pyglet.app.run()

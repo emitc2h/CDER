@@ -15,7 +15,7 @@ import utils
 class Display(pyglet.window.Window):
 
     ## --------------------------------------- ##
-    def __init__(self, calorimeters):
+    def __init__(self, calorimeters, particles):
         """
         Constructor
         """
@@ -27,6 +27,9 @@ class Display(pyglet.window.Window):
         self.mouse_zoom = 4.0
 
         self.calorimeters = calorimeters
+        self.particles = particles
+
+        self.refresh_rate = 1/30.0
         
         self.setup()
 
@@ -38,8 +41,9 @@ class Display(pyglet.window.Window):
         """
         self.width=640
         self.height=480
-        self.init(self.width, self.height)
-        pyglet.clock.schedule_interval(self.update, 1/30.0)
+        self.init()
+        pyglet.clock.schedule_interval(self.update, self.refresh_rate)
+        pyglet.clock.schedule_interval(lepton.default_system.update, self.refresh_rate)
 
 
     ## ---------------------------------------- ##
@@ -84,10 +88,10 @@ class Display(pyglet.window.Window):
     ## ---------------------------------------- ##
     def update(self, dt):
         
-        ## Draw calorimeters
+        ## Update calorimeters
         for calo in self.calorimeters:
             calo.update(dt)
-        
+
         self.draw()
 
 
@@ -101,7 +105,7 @@ class Display(pyglet.window.Window):
 
 
     ## ---------------------------------------- ##
-    def init(self, width, height):
+    def init(self):
         """
         Initialize the OpenGL rendering
         """
@@ -152,6 +156,7 @@ class Display(pyglet.window.Window):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glLoadIdentity()
 
+        ## Position camera
         gluLookAt( 0.0,  0.0, -self.mouse_zoom,
                    0.0,  0.0,  0.0,
                    0.0,  1.0,  0.0 )
@@ -163,17 +168,18 @@ class Display(pyglet.window.Window):
         
         glRotatef(self.mouse_z_rotation, math.cos(phi_camera), 0.0, math.sin(phi_camera))
 
+        ## Draw lepton particles
+        lepton.default_system.draw()
+
         ## Figure out the z angle in the calorimeter cylindrical coordinate system
         theta_camera += math.pi/2
         
         theta_calo, phi_calo = utils.sphy_to_sphz(theta_camera, phi_camera) 
 
-        #print theta_camera, theta_calo, phi_camera, phi_calo
-
         if phi_camera > 0:
             theta_camera = -theta_camera
         
-        ## Draw objects
+        ## Draw calorimeters
         for calo in self.calorimeters:
             calo.theta_camera = theta_calo
             calo.r_camera = self.mouse_zoom
@@ -189,3 +195,6 @@ class Display(pyglet.window.Window):
         
         if symbol == key.ESCAPE:
             self.dispatch_event('on_close')
+
+        if symbol == key.X:
+            self.particles[0].explode()
