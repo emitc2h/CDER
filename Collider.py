@@ -3,8 +3,8 @@ import pyglet
 ####################################################
 ## Instantiate objects
 from core.calorimeter import em, had
-objects = [em.EM_Calorimeter(),]
-#had.HAD_Calorimeter()]
+objects = [em.EM_Calorimeter(),
+           had.HAD_Calorimeter()]
 
 from core.particle import beamline
 particles = [beamline.Beamline()]

@@ -14,7 +14,7 @@ GEO_CYLINDRICAL = 'cylindrical'
 
 class Cell():
 
-    def __init__(self, parameters, geometry, color_inner, color_outer, transparency = 0.3):
+    def __init__(self, parameters, geometry, color_inner, color_outer, transparency=0.3):
         """
         Constructor
         """
@@ -48,6 +48,9 @@ class Cell():
         self.transparency = transparency
 
         self.distance = 0.0
+
+        self.display_list = None
+        self.build()
 
             
     def calculate_coordinates_projective(self):
@@ -98,14 +101,10 @@ class Cell():
         self.inner_4 = cyl_to_cart(raw_inner_4)
 
 
-    def draw(self):
+    def build(self):
 
-        ## Add distance from the z-axis
-        move_x = self.distance*math.cos(self.phi_center)
-        move_y = self.distance*math.sin(self.phi_center)
-        
-        glTranslatef(move_x, move_y, 0.0)
-
+        self.display_list = glGenLists(1)
+        glNewList(self.display_list,GL_COMPILE)
         glBegin(GL_QUADS)
 
         ## Top
@@ -155,7 +154,19 @@ class Cell():
         glVertex3f( self.inner_3[0], self.inner_3[1], self.inner_3[2] )
 
         glEnd()
+        glEndList()
 
+        
+
+
+    def draw(self):
+
+        ## Add distance from the z-axis
+        move_x = self.distance*math.cos(self.phi_center)
+        move_y = self.distance*math.sin(self.phi_center)
+        
+        glTranslatef(move_x, move_y, 0.0)
+        glCallList(self.display_list)
         glTranslatef(-move_x, -move_y, 0.0)
 
 

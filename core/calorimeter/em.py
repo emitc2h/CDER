@@ -22,7 +22,7 @@ class EM_Calorimeter(calorimeter.Calorimeter):
         self.barrel_outer_radius = 0.7
         self.barrel_max_abs_eta  = 0.9
         self.barrel_n_eta        = 7
-        self.barrel_n_phi        = 12
+        self.barrel_n_phi        = 60
 
         
         ## Endcaps parameters
@@ -30,13 +30,13 @@ class EM_Calorimeter(calorimeter.Calorimeter):
         self.endcap_outer_radius = 0.56
         self.endcap_max_abs_z    = 0.8
         self.endcap_z_width      = 0.2
-        self.endcap_n_phi        = 6
+        self.endcap_n_phi        = 30
 
         
         ## Aspect, color and transparency
         self.color_inner  = (0.1, 0.2, 0.35)
         self.color_outer  = (0.2, 0.4, 0.7)
-        self.transparency = 0.3
+        self.transparency = 0.1
 
         
         ## Coalescing calorimeter animation timing

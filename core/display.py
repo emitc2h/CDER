@@ -121,7 +121,7 @@ class Display(pyglet.window.Window):
         glMatrixMode(GL_PROJECTION)
         
         glEnable(GL_BLEND)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE)#_MINUS_SRC_ALPHA)
 
         glHint(GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST);
 
