@@ -41,7 +41,7 @@ class Display(pyglet.window.Window):
         """
         self.width=640
         self.height=480
-        self.init()
+        
         pyglet.clock.schedule_interval(self.update, self.refresh_rate)
         pyglet.clock.schedule_interval(lepton_system.update, self.refresh_rate)
 
@@ -102,32 +102,6 @@ class Display(pyglet.window.Window):
         """
         ## When the window is resized, resize the OpenGL content
         self.resize(width, height)
-
-
-    ## ---------------------------------------- ##
-    def init(self):
-        """
-        Initialize the OpenGL rendering
-        """
-
-        glClearColor(0.0, 0.0, 0.0, 0.0)
-        glClearDepth(1.0)
-        
-        glDepthFunc(GL_LESS)
-        glEnable(GL_DEPTH_TEST)
-        
-        glShadeModel(GL_SMOOTH)
-        
-        glMatrixMode(GL_PROJECTION)
-        
-        glEnable(GL_BLEND)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE)#_MINUS_SRC_ALPHA)
-
-        glHint(GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST);
-
-        glLoadIdentity()
-
-        glMatrixMode(GL_MODELVIEW)
 
 
     ## ---------------------------------------- ##
