@@ -21,8 +21,8 @@ class EM_Calorimeter(calorimeter.Calorimeter):
         self.barrel_inner_radius = 1.5
         self.barrel_outer_radius = 1.95
         self.barrel_max_abs_eta  = 1.475
-        self.barrel_n_eta        = 12
-        self.barrel_n_phi        = 60
+        self.barrel_n_eta        = 14
+        self.barrel_n_phi        = 30
 
         
         ## Endcaps parameters
@@ -30,7 +30,7 @@ class EM_Calorimeter(calorimeter.Calorimeter):
         self.endcap_outer_radius = 1.4
         self.endcap_max_abs_z    = 4.3
         self.endcap_z_width      = 0.6
-        self.endcap_n_phi        = 60
+        self.endcap_n_phi        = 30
 
         
         ## Aspect, color and transparency

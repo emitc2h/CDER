@@ -41,8 +41,8 @@ class Display(pyglet.window.Window):
         """
         Setup the window size, and OpenGL drawing area
         """
-        self.width=640
-        self.height=480
+        self.width=800
+        self.height=600
         
         pyglet.clock.schedule_interval(self.update, 1.0/self.refresh_rate)
         pyglet.clock.schedule_interval(lepton_system.update, 1.0/self.refresh_rate)
@@ -176,9 +176,6 @@ class Display(pyglet.window.Window):
         if symbol == key.ESCAPE:
             self.dispatch_event('on_close')
 
-        if symbol == key.A:
+        if symbol == key.LEFT or symbol == key.RIGHT:
             self.particles[0].start()
-
-        if symbol == key.S:
-            self.particles[0].stop()
             
