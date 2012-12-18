@@ -29,7 +29,9 @@ class Display(pyglet.window.Window):
         self.calorimeters = calorimeters
         self.particles = particles
 
-        self.refresh_rate = 1/30.0
+        self.refresh_rate = 30
+
+        self.wait = 0
         
         self.setup()
 
@@ -42,8 +44,8 @@ class Display(pyglet.window.Window):
         self.width=640
         self.height=480
         
-        pyglet.clock.schedule_interval(self.update, self.refresh_rate)
-        pyglet.clock.schedule_interval(lepton_system.update, self.refresh_rate)
+        pyglet.clock.schedule_interval(self.update, 1.0/self.refresh_rate)
+        pyglet.clock.schedule_interval(lepton_system.update, 1.0/self.refresh_rate)
 
 
     ## ---------------------------------------- ##
@@ -92,8 +94,12 @@ class Display(pyglet.window.Window):
         for calo in self.calorimeters:
             calo.update(dt)
 
-        self.draw()
+        ## Update particles
+        for particle in self.particles:
+            particle.update(dt)
 
+        self.draw()
+            
 
     ## ---------------------------------------- ##
     def on_resize(self,width, height):
@@ -170,5 +176,9 @@ class Display(pyglet.window.Window):
         if symbol == key.ESCAPE:
             self.dispatch_event('on_close')
 
-        if symbol == key.X:
-            self.particles[0].explode()
+        if symbol == key.A:
+            self.particles[0].start()
+
+        if symbol == key.S:
+            self.particles[0].stop()
+            

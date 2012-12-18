@@ -21,7 +21,7 @@ class EM_Calorimeter(calorimeter.Calorimeter):
         self.barrel_inner_radius = 1.5
         self.barrel_outer_radius = 1.95
         self.barrel_max_abs_eta  = 1.475
-        self.barrel_n_eta        = 10
+        self.barrel_n_eta        = 12
         self.barrel_n_phi        = 60
 
         

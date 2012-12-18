@@ -9,57 +9,103 @@ from lepton.renderer import BillboardRenderer
 from lepton.texturizer import SpriteTexturizer
 from lepton.emitter import StaticEmitter
 from lepton.controller import Gravity, Lifetime, Movement, Fader, ColorBlender
+from lepton import domain
 
 class Beamline():
 
     def __init__(self):
-        
-        self.spark_tex = image.load(os.path.join(os.path.dirname(__file__), 'flare3.png')).get_texture()
 
+        ## Define the sprites populating the beam
+        self.spark_tex = image.load(os.path.join(os.path.dirname(__file__), 'flare3.png'))
         self.sparks = ParticleGroup(
-            controllers=[
-                Lifetime(3),
-                Movement(damping=0.93),
-                Fader(fade_out_start=0.75, fade_out_end=3.0),
-                ],
-            renderer=BillboardRenderer(SpriteTexturizer(self.spark_tex.id)))
+            renderer=BillboardRenderer(SpriteTexturizer(self.spark_tex.get_texture().id)))
 
-        self.spark_emitter = StaticEmitter(
+        spark = [self.spark_tex]
+
+        ## Beam parameters
+        self.beam_length = 8.0
+        self.beam_start  = 100.0 + self.beam_length
+        self.beam_speed  = 8.0
+        
+        ## A beam domain
+        self.A_beam_position = -self.beam_start
+        self.A_beam_section = domain.Line((0.0, 0.0, self.A_beam_position - self.beam_length/2),
+                                          (0.0, 0.0, self.A_beam_position + self.beam_length/2))
+
+        ## A beam emitter
+        self.A_beam = StaticEmitter(
+            rate=10000,
+            position=self.A_beam_section,
             template=Particle(
-                position=(0,0,0), 
-                color=(1,1,1), 
-                size=(0.06,0.06,0)),
-            deviation=Particle(
-                position=(0.03,0.03,0.03), 
-                velocity=(2.25,2.25,2.25), 
-                size=(0.006,0.006,0),
-                age=1.5))
-
-        self.fire_tex = image.load(os.path.join(os.path.dirname(__file__), 'puff.png')).get_texture()
-
-        self.fire = ParticleGroup(
-            controllers=[
-                Lifetime(4),
-                Movement(damping=0.95),
-                Fader(fade_in_start=0, start_alpha=0, fade_in_end=0.5, max_alpha=0.4, 
-                      fade_out_start=1.0, fade_out_end=4.0)
-                      ],
-                renderer=BillboardRenderer(SpriteTexturizer(self.fire_tex.id)))
-
-        self.fire_emitter = StaticEmitter(
-            template=Particle(
-                position=(0,0,0), 
-                size=(0.6,0.6,0)),
-            deviation=Particle(
-                position=(0.06,0.06,0.06), 
-                velocity=(0.6,0.6,0.6), 
-                size=(0.15,0.15,0),
-                up=(0,0,math.pi*2), 
-                rotation=(0,0,math.pi*0.03),),
-                color=[(0.5,0,0), (0.5,0.5,0.5), (0.4,0.1,0.1), (0.85,0.3,0)],
+                size=(0.1,0.1,0.0),
+                color=(0.8,0.2,0.0)
+                )
             )
 
-    def explode(self):
-        self.fire_emitter.emit(400, self.fire)
-        self.spark_emitter.emit(400, self.sparks)
+        ## C beam domain
+        self.C_beam_position = self.beam_start
+        self.C_beam_section = domain.Line((0.0, 0.0, self.C_beam_position + self.beam_length/2),
+                                          (0.0, 0.0, self.C_beam_position - self.beam_length/2))
+
+        ## A beam emitter
+        self.C_beam = StaticEmitter(
+            rate=10000,
+            position=self.C_beam_section,
+            template=Particle(
+                size=(0.1,0.1,0.0),
+                color=(0.0,0.2,0.8)
+                )
+            )
+
+        ## Control particles from the default system
+        default_system.add_global_controller(
+            Lifetime(0.2),
+            Movement(min_velocity=0.0), 
+            Fader(max_alpha=0.7, fade_out_start=0.05, fade_out_end=0.2),
+            )
+        
+        self.group = ParticleGroup(controllers=[], 
+                                   renderer=BillboardRenderer(SpriteTexturizer.from_images(spark)))
+
+        
+    def update(self, dt):
+
+        if self.A_beam_position <= -self.beam_length/2:
+            self.A_beam_section.start_point = (0.0, 0.0, self.A_beam_position - self.beam_length/2)
+            self.A_beam_section.end_point = (0.0, 0.0, self.A_beam_position + self.beam_length/2)
+            self.A_beam_position += self.beam_speed
+        else:
+            self.stop()
+
+        if self.C_beam_position >= self.beam_length/2:
+            self.C_beam_section.start_point = (0.0, 0.0, self.C_beam_position + self.beam_length/2)
+            self.C_beam_section.end_point = (0.0, 0.0, self.C_beam_position - self.beam_length/2)
+            self.C_beam_position -= self.beam_speed
+        else:
+            self.stop()
+
+        
+    def start(self):
+        if not self.A_beam in self.group.controllers:
+            self.A_beam_position = -self.beam_start
+            self.A_beam_section.start_point = (0.0, 0.0, self.A_beam_position - self.beam_length/2)
+            self.A_beam_section.end_point = (0.0, 0.0, self.A_beam_position + self.beam_length/2)
+            self.group.bind_controller(self.A_beam)
+            self.C_beam_position = self.beam_start
+            self.C_beam_section.start_point = (0.0, 0.0, self.C_beam_position - self.beam_length/2)
+            self.C_beam_section.end_point = (0.0, 0.0, self.C_beam_position + self.beam_length/2)
+            self.group.bind_controller(self.C_beam)
+            
+
     
+    def A_stop(self):
+        if self.A_beam in self.group.controllers:
+            self.group.unbind_controller(self.A_beam)
+
+    def C_stop(self):
+        if self.C_beam in self.group.controllers:
+            self.group.unbind_controller(self.C_beam)
+
+    def stop(self):
+        self.A_stop()
+        self.C_stop()
