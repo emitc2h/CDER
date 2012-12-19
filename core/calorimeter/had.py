@@ -20,16 +20,16 @@ class HAD_Calorimeter(calorimeter.Calorimeter):
         ## Barrel parameters
         self.barrel_inner_radius = 2.2
         self.barrel_outer_radius = 3.8
-        self.barrel_max_abs_z    = 5.1
-        self.barrel_n_z          = 17
+        self.barrel_max_abs_z    = 5.0
+        self.barrel_n_z          = 10
         self.barrel_n_phi        = 15
 
 
         ## Endcap parameters
         self.endcap_inner_radius = 0.4
         self.endcap_outer_radius = 3.8
-        self.endcap_max_abs_z    = 5.4
-        self.endcap_z_width      = 0.27
+        self.endcap_max_abs_z    = 6.0
+        self.endcap_z_width      = 0.72
         self.endcap_n_phi        = 15
 
 
@@ -71,7 +71,7 @@ class HAD_Calorimeter(calorimeter.Calorimeter):
         for i in range(self.barrel_n_z):
             z = self.barrel_max_abs_z - i*full_delta_z
 
-            if i==4 or i==12: continue
+            if i==2 or i==6: continue
 
             new_ring =ring.Ring((self.barrel_inner_radius,
                                  self.barrel_outer_radius,
