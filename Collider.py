@@ -6,16 +6,21 @@ from core.calorimeter import em, had
 objects = [em.EM_Calorimeter(),
            had.HAD_Calorimeter()]
 
-from core.particle import beamline
-particles = [beamline.Beamline()]
+from core.particle import particle
+particles = [particle.Particle(50000, 1.2, 0.8, 1, (0.0, 0.7, 0.7)),
+             particle.Particle(10000, 0.6, -2.4, 1, (0.7, 0.7, 0.0)),
+             particle.Particle(160000, -0.4, 2.4, 1, (0.9, 0.1, 0.0)),
+             particle.Particle(100000, -1.4, -1.2, 1, (0.1, 0.1, 0.9))]
 
+from core.particle import beamline
+beam = beamline.Beamline(particles)
 
 ####################################################
 ## Instantiate Display
 from core.display import Display
 from pyglet.gl import *
 
-display = Display(objects, particles)
+display = Display(objects, beam)
 display.clear()
 
 glEnable(GL_BLEND)

@@ -8,13 +8,16 @@ from lepton import Particle, ParticleGroup, default_system
 from lepton.renderer import BillboardRenderer
 from lepton.texturizer import SpriteTexturizer
 from lepton.emitter import StaticEmitter
-from lepton.controller import Gravity, Lifetime, Movement, Fader, ColorBlender
+from lepton.controller import Lifetime, Movement, Fader
 from lepton import domain
 
 class Beamline():
 
-    def __init__(self):
+    def __init__(self, particles):
 
+        ## Load particles
+        self.particles = particles
+        
         ## Define the sprites populating the beam
         self.spark_tex = image.load(os.path.join(os.path.dirname(__file__), 'flare3.png'))
         self.sparks = ParticleGroup(
@@ -106,6 +109,9 @@ class Beamline():
                 self.collide(0)          
             self.stop()
 
+        for particle in self.particles:
+            particle.update(dt)
+
 
         
     def start(self):
@@ -119,6 +125,8 @@ class Beamline():
             self.C_beam_section.start_point = (0.0, 0.0, self.C_beam_position - self.beam_length/2)
             self.C_beam_section.end_point = (0.0, 0.0, self.C_beam_position + self.beam_length/2)
             self.group.bind_controller(self.C_beam)
+        for particle in self.particles:
+            particle.stop()
         self.incoming = True
             
 
@@ -132,9 +140,12 @@ class Beamline():
             self.group.unbind_controller(self.C_beam)
 
     def stop(self):
-        self.A_stop()
-        self.C_stop()
-        self.incoming = False
+        if self.incoming:
+            self.A_stop()
+            self.C_stop()
+            for particle in self.particles:
+                particle.start()
+            self.incoming = False
 
 
     def collide(self,dt):

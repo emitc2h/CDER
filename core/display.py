@@ -15,7 +15,7 @@ import utils
 class Display(pyglet.window.Window):
 
     ## --------------------------------------- ##
-    def __init__(self, calorimeters, particles):
+    def __init__(self, calorimeters, beam):
         """
         Constructor
         """
@@ -27,7 +27,7 @@ class Display(pyglet.window.Window):
         self.mouse_zoom = 15.0
 
         self.calorimeters = calorimeters
-        self.particles = particles
+        self.beam = beam
 
         self.refresh_rate = 30
 
@@ -94,9 +94,8 @@ class Display(pyglet.window.Window):
         for calo in self.calorimeters:
             calo.update(dt)
 
-        ## Update particles
-        for particle in self.particles:
-            particle.update(dt)
+        ## Update beam
+        self.beam.update(dt)
 
         self.draw()
             
@@ -177,5 +176,5 @@ class Display(pyglet.window.Window):
             self.dispatch_event('on_close')
 
         if symbol == key.LEFT or symbol == key.RIGHT:
-            self.particles[0].start()
+            self.beam.start()
             
