@@ -26,13 +26,11 @@ glDisable(GL_DEPTH_TEST)
 
 
 ####################################################
-## Drawing handler
-
+## Drawing handler, interface
 @display.event
 def on_draw():
     display.clear()
     glLoadIdentity()
-
 
         
 ####################################################
