@@ -71,10 +71,16 @@ class Calorimeter():
                 for cell in ring.cells:
                     if particle.isEM and self.calo_type == CALO_EM or \
                       particle.isHAD and self.calo_type == CALO_HAD:
-                        deta = particle.deta(cell)
-                        dphi = particle.dphi(cell)
-                        if deta < cell.eta_width/1.8 and dphi < cell.phi_width/1.8:
-                            target_cells.append(cell)
+                        if particle.in_barrel:
+                            dphi = particle.dphi(cell)
+                            if particle.r < cell.radius_outer and particle.r > cell.radius_inner and \
+                              dphi < cell.phi_width/1.8:
+                                target_cells.append(cell)
+                        else:
+                            deta = particle.deta(cell)
+                            dphi = particle.dphi(cell)
+                            if deta < cell.eta_width/1.7 and dphi < cell.phi_width/1.8:
+                                target_cells.append(cell)
                         
             pt = math.log(particle.pt/10000.0)
             for cell in target_cells:

@@ -221,7 +221,7 @@ class Display(pyglet.window.Window):
                 G = 0.5 - 0.5*color_random2 + 0.5*color_random3
                 B = 0.5 - 0.5*color_random3 + 0.5*color_random1
                 new_particle = Particle(pt=random.random()*100000,
-                                        eta=(random.random()-0.5)*4.0,
+                                        eta=(random.random()-0.5)*6.0,
                                         phi=random.random()*2*math.pi,
                                         n=1,
                                         color=(R,G,B),

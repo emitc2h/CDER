@@ -33,8 +33,21 @@ class Particle():
         spark = [self.spark_tex]
         
         ## Particle line domain
+        em_inner_radius = 1.5
+        
+        cartesian_destination = rap_to_cart((em_inner_radius, self.eta, self.phi))
+
+        ## Check that z is above em endcap
+        self.in_barrel = False
+        self.r = em_inner_radius
+        if abs(cartesian_destination[2]) > 4.0:
+            self.in_barrel = True
+            self.r = (4.0/abs(cartesian_destination[2]))*em_inner_radius
+
+        cartesian_destination = rap_to_cart((self.r, self.eta, self.phi))
+        
         self.particle_line = domain.Line((0.0, 0.0, 0.0),
-                                         rap_to_cart((1.5, self.eta, self.phi)))
+                                         cartesian_destination)
 
         ## A beam emitter
         self.particle = StaticEmitter(
