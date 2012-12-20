@@ -104,15 +104,23 @@ class Display(pyglet.window.Window):
 
         ## Update beam
         self.beam.update(dt)
-
-        ## Update particles
-        if self.allow_update:
-            if not self.beam.incoming:
+            
+        if not self.beam.incoming:
+            if self.allow_update:
+                all_hit = True
                 for particle in self.particles:
                     particle.show()
-                for calo in self.calorimeters:
-                    calo.energize(self.particles)
-                self.allow_update = False
+                    if not particle.calo_hit_EM and not particle.calo_hit_HAD:
+                        all_hit = False
+                if not all_hit:
+                    for calo in self.calorimeters:
+                        calo.energize(self.particles)
+                else:
+                    self.allow_update = False
+
+        ## Update particles
+        for particle in self.particles:
+            particle.update(dt)
 
         ## Update particle systems
         lepton_system.update(dt) 
@@ -220,10 +228,9 @@ class Display(pyglet.window.Window):
                 R = 0.5 - 0.5*color_random1 + 0.5*color_random2
                 G = 0.5 - 0.5*color_random2 + 0.5*color_random3
                 B = 0.5 - 0.5*color_random3 + 0.5*color_random1
-                new_particle = Particle(pt=random.random()*100000,
-                                        eta=(random.random()-0.5)*6.0,
+                new_particle = Particle(pt=17000 + random.random()*83000,
+                                        eta=(random.random()-0.5)*4.5,
                                         phi=random.random()*2*math.pi,
-                                        n=1,
                                         color=(R,G,B),
                                         isEM=True,
                                         isHAD=random.randint(0,1))

@@ -66,31 +66,36 @@ class Calorimeter():
     def energize(self, particles):
         
         for particle in particles:
-            target_cells = []
-            for ring in self.rings:
-                for cell in ring.cells:
-                    if particle.isEM and self.calo_type == CALO_EM or \
-                      particle.isHAD and self.calo_type == CALO_HAD:
-                        if particle.in_barrel:
-                            dphi = particle.dphi(cell)
-                            if particle.r < cell.radius_outer and particle.r > cell.radius_inner and \
-                              dphi < cell.phi_width/1.8:
-                                target_cells.append(cell)
-                        else:
-                            deta = particle.deta(cell)
-                            dphi = particle.dphi(cell)
-                            if deta < cell.eta_width/1.7 and dphi < cell.phi_width/1.8:
-                                target_cells.append(cell)
+            if not particle.is_travelling and \
+              (not (particle.calo_hit_EM and self.calo_type == CALO_EM) or \
+              not (particle.calo_hit_HAD and self.calo_type == CALO_HAD)):
+                target_cells = []
+                for ring in self.rings:
+                    for cell in ring.cells:
+                        if particle.isEM and self.calo_type == CALO_EM or \
+                          particle.isHAD and self.calo_type == CALO_HAD:
+                            if particle.in_barrel:
+                                dphi = particle.dphi(cell)
+                                if particle.r < cell.radius_outer and particle.r > cell.radius_inner and \
+                                  dphi < cell.phi_width/1.8 and particle.eta*cell.eta_center > 0:
+                                    target_cells.append(cell)
+                            else:
+                                deta = particle.deta(cell)
+                                dphi = particle.dphi(cell)
+                                if deta < cell.eta_width/1.7 and dphi < cell.phi_width/1.8:
+                                    target_cells.append(cell)
+                particle.calo_hit_EM = True
+                particle.calo_hit_HAD = True
                         
-            pt = math.log(particle.pt/10000.0)
-            for cell in target_cells:
-                dR   = particle.dR(cell)
-                max_transparency = 0.7
-                if self.calo_type == CALO_HAD:
-                    max_transparency = 0.2
-                cell.transparency += (max_transparency - cell.transparency)*(pt/(pt + 1))*(1/(dR+1))
-                cell.build()
-                self.modified_cells.append(cell)
+                pt = math.log(particle.pt/10000.0)
+                for cell in target_cells:
+                    dR   = particle.dR(cell)
+                    max_transparency = 0.4
+                    if self.calo_type == CALO_HAD:
+                        max_transparency = 0.2
+                    cell.transparency += (max_transparency - cell.transparency)*(pt/(pt + 1))*(1/(dR+1))
+                    cell.build()
+                    self.modified_cells.append(cell)
 
 
     def reset(self):

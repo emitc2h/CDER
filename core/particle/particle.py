@@ -15,7 +15,7 @@ from lepton import domain
 
 class Particle():
 
-    def __init__(self, pt, eta, phi, n, color, isEM = True, isHAD = True):
+    def __init__(self, pt, eta, phi, color, isEM = True, isHAD = True):
 
         self.r   = 0.0
         self.pt  = pt
@@ -40,8 +40,11 @@ class Particle():
 
         ## Check that z is above em endcap
         self.in_barrel = False
+        self.is_travelling = False
+        self.calo_hit_EM = False
+        self.calo_hit_HAD = False
         self.end_r = em_inner_radius
-        if abs(cartesian_endpoint[2]) > 4.0:
+        if abs(cartesian_endpoint[2]) >= 4.0:
             self.in_barrel = True
             self.end_r = (4.0/abs(cartesian_endpoint[2]))*em_inner_radius
 
@@ -67,10 +70,18 @@ class Particle():
         if not self.particle in self.group.controllers:
             self.particle_line.end_point = rap_to_cart((self.r, self.eta, self.phi))
             self.group.bind_controller(self.particle)
+            self.is_travelling = True
+            self.calo_hit_EM  = False
+            self.calo_hit_HAD = False
 
-    def update(self):
-        if self.r < self.end_r:
-            self.r += 0.1
+    def update(self, dt):
+        if self.is_travelling:
+            if self.r < self.end_r:
+                self.r += 0.05*math.log(self.pt/1000.0)
+                self.particle_line.end_point = rap_to_cart((self.r, self.eta, self.phi))
+            else:
+                self.is_travelling = False
+                self.r = self.end_r
         
     
     def hide(self):

@@ -22,7 +22,7 @@ class HAD_Calorimeter(calorimeter.Calorimeter):
         ## Barrel parameters
         self.barrel_inner_radius = 2.2
         self.barrel_outer_radius = 3.0
-        self.barrel_max_abs_z    = 5.0
+        self.barrel_max_abs_z    = 4.3
         self.barrel_n_z          = 10
         self.barrel_n_phi        = 15
 
@@ -30,8 +30,8 @@ class HAD_Calorimeter(calorimeter.Calorimeter):
         ## Endcap parameters
         self.endcap_inner_radius = 0.4
         self.endcap_outer_radius = 3.0
-        self.endcap_max_abs_z    = 6.08
-        self.endcap_z_width      = 0.9
+        self.endcap_max_abs_z    = 5.26
+        self.endcap_z_width      = 0.86
         self.endcap_n_phi        = 15
 
 
