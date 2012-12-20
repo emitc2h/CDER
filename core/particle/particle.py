@@ -10,7 +10,7 @@ from lepton import Particle as lepParticle, ParticleGroup, default_system
 from lepton.renderer import BillboardRenderer
 from lepton.texturizer import SpriteTexturizer
 from lepton.emitter import StaticEmitter
-from lepton.controller import Lifetime, Movement, Fader
+from lepton.controller import Lifetime
 from lepton import domain
 
 class Particle():
@@ -44,14 +44,6 @@ class Particle():
                 size=(0.1,0.1,0.0),
                 color=color
                 )
-            )
-
-
-        ## Control particles from the default system
-        default_system.add_global_controller(
-            Movement(min_velocity=0.0),
-            Lifetime(1.0),
-            Fader(max_alpha=0.7, fade_out_start=0.05, fade_out_end=0.2),
             )
         
         self.group = ParticleGroup(controllers=[], 

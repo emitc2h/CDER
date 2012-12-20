@@ -3,12 +3,11 @@ from pyglet.gl import *
 from pyglet.window import key
 from pyglet.window import mouse
 from lepton import default_system as lepton_system
+from lepton.controller import Lifetime, Movement, Fader
 import math
 from particle.particle import Particle
 import random
 import utils
-
-from guppy import hpy
 
 ####################################################
 ## A class inheriting from the pyglet window      ##
@@ -52,7 +51,13 @@ class Display(pyglet.window.Window):
         self.height=600
         
         pyglet.clock.schedule_interval(self.update, 1.0/self.refresh_rate)
-        pyglet.clock.schedule_interval(lepton_system.update, 1.0/self.refresh_rate)
+
+        ## Control particles from the default system
+        lepton_system.add_global_controller(
+            Movement(min_velocity=0.0),
+            Lifetime(1.0),
+            Fader(max_alpha=0.7, fade_out_start=0.05, fade_out_end=0.2),
+            )
 
 
     ## ---------------------------------------- ##
@@ -109,6 +114,9 @@ class Display(pyglet.window.Window):
                     calo.energize(self.particles)
                 self.allow_update = False
 
+        ## Update particle systems
+        lepton_system.update(dt) 
+                
         ## Update calorimeters
         for calo in self.calorimeters:
             calo.update(dt)
@@ -196,13 +204,15 @@ class Display(pyglet.window.Window):
             ## Remove existing particles
             for particle in self.particles:
                 particle.hide()
+                lepton_system.remove_group(particle.group)
+                lepton_system.remove_group(particle.sparks)
             for calo in self.calorimeters:
                 calo.reset()
 
             self.particles = []
             
             ## Generate a random set of particles
-            n = random.randint(5,15)
+            n = random.randint(5,100)
             for i in range(n):
                 color_random1 = random.random()
                 color_random2 = random.random()
@@ -221,6 +231,3 @@ class Display(pyglet.window.Window):
             
             self.beam.start()
             self.allow_update = True
-
-            h = hpy()
-            print h.heap()

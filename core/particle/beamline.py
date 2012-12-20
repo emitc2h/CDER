@@ -76,16 +76,8 @@ class Beamline():
                 size=(0.1, 0.1, 0)),
             deviation=Particle(
         #position=(0.05, 0.05, 0.05), 
-                velocity=(0.20, 0.20, 0.20),
+                velocity=(2.0, 2.0, 2.0),
                 age=0.5)
-            )
-
-
-        ## Control particles from the default system
-        default_system.add_global_controller(
-            Movement(min_velocity=0.0),
-            Lifetime(1.0),
-            Fader(max_alpha=0.7, fade_out_start=0.05, fade_out_end=0.2),
             )
         
         self.group = ParticleGroup(controllers=[], 
@@ -140,4 +132,4 @@ class Beamline():
 
 
     def collide(self,dt):
-        self.collision.emit(100, self.colsparks)
+        self.collision.emit(500, self.colsparks)
