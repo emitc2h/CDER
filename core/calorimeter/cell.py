@@ -43,8 +43,8 @@ class Cell():
             self.phi_width    = parameters[5]
             self.calculate_coordinates_cylindrical()
 
-        self.color_outer = color_outer #(0.2, 0.4, 0.7)
-        self.color_inner = color_inner #(0.1, 0.2, 0.35)
+        self.color_outer = color_outer
+        self.color_inner = color_inner
         self.transparency = transparency
 
         self.distance = 0.0
@@ -76,6 +76,13 @@ class Cell():
         self.inner_3 = rap_to_cart(raw_inner_3)
         self.inner_4 = rap_to_cart(raw_inner_4)
 
+        self.z_center = eta_to_z(((self.radius_inner+self.radius_outer)/2, self.eta_center))
+
+        z_lo = eta_to_z(((self.radius_inner+self.radius_outer)/2, self.eta_center - self.eta_width))
+        z_hi = eta_to_z(((self.radius_inner+self.radius_outer)/2, self.eta_center + self.eta_width))
+
+        self.z_width = abs(z_lo - z_hi)
+
 
     def calculate_coordinates_cylindrical(self):
 
@@ -99,6 +106,14 @@ class Cell():
         self.inner_2 = cyl_to_cart(raw_inner_2)
         self.inner_3 = cyl_to_cart(raw_inner_3)
         self.inner_4 = cyl_to_cart(raw_inner_4)
+
+        self.eta_center = z_to_eta(((self.radius_inner+self.radius_outer)/2, self.z_center))
+
+        eta_lo = z_to_eta(((self.radius_inner+self.radius_outer)/2, self.z_center - self.z_width))
+        eta_hi = z_to_eta(((self.radius_inner+self.radius_outer)/2, self.z_center + self.z_width))
+
+        self.eta_width = abs(eta_lo - eta_hi)
+
 
 
     def build(self):

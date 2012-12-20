@@ -16,6 +16,8 @@ class EM_Calorimeter(calorimeter.Calorimeter):
         ## Initiate parent class
         calorimeter.Calorimeter.__init__(self)
 
+        ## Calorimeter type
+        self.calo_type = calorimeter.CALO_EM
         
         ## Barrel parameters
         self.barrel_inner_radius = 1.5
@@ -36,7 +38,7 @@ class EM_Calorimeter(calorimeter.Calorimeter):
         ## Aspect, color and transparency
         self.color_inner  = (0.1, 0.2, 0.35)
         self.color_outer  = (0.2, 0.4, 0.7)
-        self.transparency = 0.1
+        self.transparency = 0.05
 
         
         ## Coalescing calorimeter animation timing

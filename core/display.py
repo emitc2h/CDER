@@ -4,7 +4,11 @@ from pyglet.window import key
 from pyglet.window import mouse
 from lepton import default_system as lepton_system
 import math
+from particle.particle import Particle
+import random
 import utils
+
+from guppy import hpy
 
 ####################################################
 ## A class inheriting from the pyglet window      ##
@@ -15,7 +19,7 @@ import utils
 class Display(pyglet.window.Window):
 
     ## --------------------------------------- ##
-    def __init__(self, calorimeters, beam):
+    def __init__(self, calorimeters, beam, particles):
         """
         Constructor
         """
@@ -27,10 +31,13 @@ class Display(pyglet.window.Window):
         self.mouse_zoom = 15.0
 
         self.calorimeters = calorimeters
+        self.particles = particles
         self.beam = beam
 
+        ## Controllers to limit redundant execution
+        self.allow_update = False
+        
         self.refresh_rate = 30
-
         self.wait = 0
         
         self.setup()
@@ -89,13 +96,22 @@ class Display(pyglet.window.Window):
 
     ## ---------------------------------------- ##
     def update(self, dt):
-        
-        ## Update calorimeters
-        for calo in self.calorimeters:
-            calo.update(dt)
 
         ## Update beam
         self.beam.update(dt)
+
+        ## Update particles
+        if self.allow_update:
+            if not self.beam.incoming:
+                for particle in self.particles:
+                    particle.show()
+                for calo in self.calorimeters:
+                    calo.energize(self.particles)
+                self.allow_update = False
+
+        ## Update calorimeters
+        for calo in self.calorimeters:
+            calo.update(dt)
 
         self.draw()
             
@@ -176,5 +192,35 @@ class Display(pyglet.window.Window):
             self.dispatch_event('on_close')
 
         if symbol == key.LEFT or symbol == key.RIGHT:
-            self.beam.start()
+
+            ## Remove existing particles
+            for particle in self.particles:
+                particle.hide()
+            for calo in self.calorimeters:
+                calo.reset()
+
+            self.particles = []
             
+            ## Generate a random set of particles
+            n = random.randint(5,15)
+            for i in range(n):
+                color_random1 = random.random()
+                color_random2 = random.random()
+                color_random3 = random.random()
+                R = 0.5 - 0.5*color_random1 + 0.5*color_random2
+                G = 0.5 - 0.5*color_random2 + 0.5*color_random3
+                B = 0.5 - 0.5*color_random3 + 0.5*color_random1
+                new_particle = Particle(pt=random.random()*100000,
+                                        eta=(random.random()-0.5)*4.0,
+                                        phi=random.random()*2*math.pi,
+                                        n=1,
+                                        color=(R,G,B),
+                                        isEM=True,
+                                        isHAD=random.randint(0,1))
+                self.particles.append(new_particle)
+            
+            self.beam.start()
+            self.allow_update = True
+
+            h = hpy()
+            print h.heap()

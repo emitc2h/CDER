@@ -16,7 +16,9 @@ class HAD_Calorimeter(calorimeter.Calorimeter):
         ## Initiate parent class
         calorimeter.Calorimeter.__init__(self)
 
-
+        ## Calorimeter type
+        self.calo_type = calorimeter.CALO_HAD
+        
         ## Barrel parameters
         self.barrel_inner_radius = 2.2
         self.barrel_outer_radius = 3.8

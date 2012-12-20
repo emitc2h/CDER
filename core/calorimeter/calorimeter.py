@@ -4,7 +4,8 @@ import math
 ## An assemblage of rings making a calorimeter    ##
 ## component                                      ##
 ####################################################
-
+CALO_EM  = 'em'
+CALO_HAD = 'had'
 class Calorimeter():
 
     def __init__(self):
@@ -16,6 +17,9 @@ class Calorimeter():
         self.theta_camera = 0.0
         self.r_camera = 0.0
         self.phi_camera = 0.0
+        self.transparency = 0.1
+        self.modified_cells = []
+        self.calo_type = None
 
 
     def draw(self):
@@ -51,13 +55,37 @@ class Calorimeter():
         n_rings = len(self.rings)
         if a == 0.0 and n_rings%2 > 0:
             self.rings[n_rings/2].draw()
-
-        
-
-
-
+    
             
     def update(self, dt):
 
         for ring in self.rings:
-            ring.update(dt)        
+            ring.update(dt)
+
+
+    def energize(self, particles):
+        
+        for particle in particles:
+            target_cells = []
+            for ring in self.rings:
+                for cell in ring.cells:
+                    if particle.isEM and self.calo_type == CALO_EM or \
+                      particle.isHAD and self.calo_type == CALO_HAD:
+                        deta = particle.deta(cell)
+                        dphi = particle.dphi(cell)
+                        if deta < cell.eta_width/1.9 and dphi < cell.phi_width/1.9:
+                            target_cells.append(cell)
+                        
+            pt = math.log(particle.pt/10000.0)
+            for cell in target_cells:
+                dR   = particle.dR(cell)
+                cell.transparency += (1.0 - cell.transparency)*(pt/(pt + 1))*(1/(dR+1))
+                cell.build()
+                self.modified_cells.append(cell)
+
+
+    def reset(self):
+        for cell in self.modified_cells:
+            cell.transparency = self.transparency
+            cell.build()
+        self.modified_cells = []

@@ -13,10 +13,7 @@ from lepton import domain
 
 class Beamline():
 
-    def __init__(self, particles):
-
-        ## Load particles
-        self.particles = particles
+    def __init__(self):
         
         ## Define the sprites populating the beam
         self.spark_tex = image.load(os.path.join(os.path.dirname(__file__), 'flare3.png'))
@@ -65,9 +62,9 @@ class Beamline():
         ## Collision
         self.colsparks = ParticleGroup(
             controllers=[
-                Lifetime(1.0),
-                Movement(damping=0.93),
-                Fader(fade_out_start=0.4, fade_out_end=1.0),
+                Lifetime(0.5),
+                Movement(damping=0.83),
+                Fader(fade_out_start=0.2, fade_out_end=0.5),
                 ],
             renderer=BillboardRenderer(SpriteTexturizer(self.spark_tex.get_texture().id))
             )
@@ -78,9 +75,9 @@ class Beamline():
                 color=(1.0 ,0.7, 0.0), 
                 size=(0.1, 0.1, 0)),
             deviation=Particle(
-                position=(0.05, 0.05, 0.05), 
-                velocity=(0.8, 0.8, 0.8),
-                age=1.5)
+        #position=(0.05, 0.05, 0.05), 
+                velocity=(0.20, 0.20, 0.20),
+                age=0.5)
             )
 
 
@@ -107,10 +104,8 @@ class Beamline():
         else:
             if self.incoming:
                 self.collide(0)          
-            self.stop()
 
-        for particle in self.particles:
-            particle.update(dt)
+            self.stop()
 
 
         
@@ -125,8 +120,6 @@ class Beamline():
             self.C_beam_section.start_point = (0.0, 0.0, self.C_beam_position - self.beam_length/2)
             self.C_beam_section.end_point = (0.0, 0.0, self.C_beam_position + self.beam_length/2)
             self.group.bind_controller(self.C_beam)
-        for particle in self.particles:
-            particle.stop()
         self.incoming = True
             
 
@@ -143,10 +136,8 @@ class Beamline():
         if self.incoming:
             self.A_stop()
             self.C_stop()
-            for particle in self.particles:
-                particle.start()
             self.incoming = False
 
 
     def collide(self,dt):
-        self.collision.emit(400, self.colsparks)
+        self.collision.emit(100, self.colsparks)

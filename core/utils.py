@@ -77,6 +77,29 @@ def cyl_to_cart(cyl_point):
     return (x, y, z)
 
 
+def z_to_eta(cyl_point):
+
+    r   = cyl_point[0]
+    z   = cyl_point[1]
+
+    theta = math.atan2(r,z)
+    eta   = -math.log(math.tan(theta/2.0))
+
+    return eta
+
+
+def eta_to_z(rap_point):
+
+    r   = rap_point[0]
+    eta = rap_point[1]
+
+    theta = 2*math.atan(math.exp(-eta))
+    z = r/math.tan(theta)
+
+    return z
+    
+
+
 def in2pi(phi):
 	"""
 	Take all phi values within 2*pi

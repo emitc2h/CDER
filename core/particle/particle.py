@@ -15,8 +15,15 @@ from lepton import domain
 
 class Particle():
 
-    def __init__(self, pt, eta, phi, n, color):
+    def __init__(self, pt, eta, phi, n, color, isEM = True, isHAD = True):
 
+        self.pt  = pt
+        self.eta = eta
+        self.phi = phi
+
+        self.isEM  = isEM
+        self.isHAD = isHAD
+        
         ## Define the sprites populating the beam
         self.spark_tex = image.load(os.path.join(os.path.dirname(__file__), 'flare3.png'))
         self.sparks = ParticleGroup(
@@ -27,11 +34,11 @@ class Particle():
         
         ## Particle line domain
         self.particle_line = domain.Line((0.0, 0.0, 0.0),
-                                         rap_to_cart((math.log(pt/10000.0 + 1), eta, phi)))
+                                         rap_to_cart((1.5, self.eta, self.phi)))
 
         ## A beam emitter
         self.particle = StaticEmitter(
-            rate=(math.log(pt/10000.0 + 1))*1000,
+            rate=1000,
             position=self.particle_line,
             template=lepParticle(
                 size=(0.1,0.1,0.0),
@@ -49,15 +56,20 @@ class Particle():
         
         self.group = ParticleGroup(controllers=[], 
                                    renderer=BillboardRenderer(SpriteTexturizer.from_images(spark)))
-
         
-    def update(self, dt):
-        pass
-        
-    def start(self):
+    def show(self):
         if not self.particle in self.group.controllers:
             self.group.bind_controller(self.particle)
     
-    def stop(self):
+    def hide(self):
         if self.particle in self.group.controllers:
             self.group.unbind_controller(self.particle)
+
+    def dR(self, cell):
+        return math.sqrt((self.eta - cell.eta_center)**2 + delta_phi(self.phi, cell.phi_center)**2)
+
+    def deta(self, cell):
+        return abs(self.eta - cell.eta_center)
+
+    def dphi(self, cell):
+        return delta_phi(self.phi, cell.phi_center)
