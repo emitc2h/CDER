@@ -38,10 +38,10 @@ class Particle():
 
         ## A beam emitter
         self.particle = StaticEmitter(
-            rate=1000,
+            rate= 750+500*abs(self.eta),
             position=self.particle_line,
             template=lepParticle(
-                size=(0.1,0.1,0.0),
+                size=(0.05,0.05,0.0),
                 color=color
                 )
             )
