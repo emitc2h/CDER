@@ -17,6 +17,7 @@ class Particle():
 
     def __init__(self, pt, eta, phi, n, color, isEM = True, isHAD = True):
 
+        self.r   = 0.0
         self.pt  = pt
         self.eta = eta
         self.phi = phi
@@ -35,19 +36,19 @@ class Particle():
         ## Particle line domain
         em_inner_radius = 1.5
         
-        cartesian_destination = rap_to_cart((em_inner_radius, self.eta, self.phi))
+        cartesian_endpoint = rap_to_cart((em_inner_radius, self.eta, self.phi))
 
         ## Check that z is above em endcap
         self.in_barrel = False
-        self.r = em_inner_radius
-        if abs(cartesian_destination[2]) > 4.0:
+        self.end_r = em_inner_radius
+        if abs(cartesian_endpoint[2]) > 4.0:
             self.in_barrel = True
-            self.r = (4.0/abs(cartesian_destination[2]))*em_inner_radius
+            self.end_r = (4.0/abs(cartesian_endpoint[2]))*em_inner_radius
 
-        cartesian_destination = rap_to_cart((self.r, self.eta, self.phi))
+        cartesian_endpoint = rap_to_cart((self.r, self.eta, self.phi))
         
         self.particle_line = domain.Line((0.0, 0.0, 0.0),
-                                         cartesian_destination)
+                                         cartesian_endpoint)
 
         ## A beam emitter
         self.particle = StaticEmitter(
@@ -64,7 +65,13 @@ class Particle():
         
     def show(self):
         if not self.particle in self.group.controllers:
+            self.particle_line.end_point = rap_to_cart((self.r, self.eta, self.phi))
             self.group.bind_controller(self.particle)
+
+    def update(self):
+        if self.r < self.end_r:
+            self.r += 0.1
+        
     
     def hide(self):
         if self.particle in self.group.controllers:
