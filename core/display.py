@@ -212,7 +212,7 @@ class Display(pyglet.window.Window):
             self.particles = []
             
             ## Generate a random set of particles
-            n = random.randint(5,100)
+            n = random.randint(10,50)
             for i in range(n):
                 color_random1 = random.random()
                 color_random2 = random.random()

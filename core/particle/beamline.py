@@ -16,7 +16,7 @@ class Beamline():
     def __init__(self):
         
         ## Define the sprites populating the beam
-        self.spark_tex = image.load(os.path.join(os.path.dirname(__file__), 'flare3.png'))
+        self.spark_tex = image.load(os.path.join(os.path.dirname(__file__), 'wisp.png'))
         self.sparks = ParticleGroup(
             controllers=[Lifetime(0.2)],
             renderer=BillboardRenderer(SpriteTexturizer(self.spark_tex.get_texture().id)))
