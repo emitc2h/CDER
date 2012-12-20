@@ -23,7 +23,7 @@ em_endcap_thickness = 0.20
 ## Hadronic calorimeter
 
 ## Display
-display_had = False
+display_had = True
 
 ## Geometry
 had_inner_radius  = 2.2
@@ -36,6 +36,6 @@ had_phi_divisions = 15
 ## ----------------------------------------------------- ##
 ## Particles
 beam_speed = 8.0
-particle_speed = 0.01
-particle_filling = 2000
+particle_speed = 0.05
+particle_filling = 1000
 

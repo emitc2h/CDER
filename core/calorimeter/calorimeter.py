@@ -87,13 +87,13 @@ class Calorimeter():
                 particle.calo_hit_EM = True
                 particle.calo_hit_HAD = True
                         
-                pt = math.log(particle.pt/10000.0)
+                pt = math.log(particle.pt/1000.0)
                 for cell in target_cells:
                     dR   = particle.dR(cell)
                     max_transparency = 0.4
                     if self.calo_type == CALO_HAD:
                         max_transparency = 0.2
-                    cell.transparency += (max_transparency - cell.transparency)*(pt/(pt + 1))*(1/(dR+1))
+                    cell.transparency += abs(max_transparency - cell.transparency)*(pt/(pt + 1))*(1/(dR+1))
                     cell.build()
                     self.modified_cells.append(cell)
 

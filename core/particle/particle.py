@@ -16,7 +16,7 @@ from lepton import domain
 
 class Particle():
 
-    def __init__(self, pt, eta, phi, color, isEM = True, isHAD = True):
+    def __init__(self, pt, eta, phi, color, isEM=True, isHAD=True, is_min_ion=False):
 
         self.r   = 0.0
         self.pt  = pt
@@ -25,6 +25,8 @@ class Particle():
 
         self.isEM  = isEM
         self.isHAD = isHAD
+
+        self.is_min_ion = is_min_ion
         
         ## Define the sprites populating the beam
         self.spark_tex = image.load(os.path.join(os.path.dirname(__file__), 'wisp.png'))
@@ -42,8 +44,14 @@ class Particle():
         self.is_travelling = False
         self.calo_hit_EM = False
         self.calo_hit_HAD = False
-        self.end_r = em_inner_radius
-        em_inner_z = (1.0 - em_endcap_thickness/2)*eta_to_z((em_outer_radius, em_max_abs_eta))
+        
+        if self.is_min_ion:
+            self.end_r = 3*em_inner_radius
+            em_inner_z = 3*(1.0 - em_endcap_thickness/2)*eta_to_z((em_outer_radius, em_max_abs_eta))
+        else:
+            self.end_r = em_inner_radius
+            em_inner_z = (1.0 - em_endcap_thickness/2)*eta_to_z((em_outer_radius, em_max_abs_eta))
+            
         if abs(cartesian_endpoint[2]) >= em_inner_z:
             self.in_barrel = True
             self.end_r = (em_inner_z/abs(cartesian_endpoint[2]))*em_inner_radius
@@ -54,8 +62,12 @@ class Particle():
                                          cartesian_endpoint)
 
         ## A beam emitter
+        rate = (3.0/5)*particle_filling+(2.0/5)*particle_filling*abs(self.eta)
+        if self.is_min_ion:
+            rate *= 4
+        
         self.particle = StaticEmitter(
-            rate= (3.0/5)*particle_filling+(2.0/5)*particle_filling*abs(self.eta),
+            rate=rate,
             position=self.particle_line,
             template=lepParticle(
                 size=(0.05,0.05,0.0),
@@ -65,7 +77,8 @@ class Particle():
         
         self.group = ParticleGroup(controllers=[], 
                                    renderer=BillboardRenderer(SpriteTexturizer.from_images(spark)))
-        
+
+
     def show(self):
         if not self.particle in self.group.controllers:
             self.particle_line.end_point = rap_to_cart((self.r, self.eta, self.phi))
@@ -77,7 +90,10 @@ class Particle():
     def update(self, dt):
         if self.is_travelling:
             if self.r < self.end_r:
-                self.r += particle_speed*math.log(self.pt/1000.0)
+                if self.is_min_ion:
+                    self.r += 3*particle_speed*math.log(self.pt/1000.0)
+                else:
+                    self.r += particle_speed*math.log(self.pt/1000.0)
             else:
                 self.is_travelling = False
                 self.r = self.end_r

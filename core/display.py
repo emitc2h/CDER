@@ -5,7 +5,12 @@ from pyglet.window import mouse
 from lepton import default_system as lepton_system
 from lepton.controller import Lifetime, Movement, Fader
 import math
-from particle.particle import Particle
+from particle.jet import Jet
+from particle.tau import Tau
+from particle.electron import Electron
+from particle.muon import Muon
+from particle.photon import Photon
+from particle.met import MET
 import random
 import utils
 
@@ -220,21 +225,31 @@ class Display(pyglet.window.Window):
             self.particles = []
             
             ## Generate a random set of particles
-            n = random.randint(10,50)
-            for i in range(n):
-                color_random1 = random.random()
-                color_random2 = random.random()
-                color_random3 = random.random()
-                R = 0.5 - 0.5*color_random1 + 0.5*color_random2
-                G = 0.5 - 0.5*color_random2 + 0.5*color_random3
-                B = 0.5 - 0.5*color_random3 + 0.5*color_random1
-                new_particle = Particle(pt=17000 + random.random()*83000,
-                                        eta=(random.random()-0.5)*4.5,
-                                        phi=random.random()*2*math.pi,
-                                        color=(R,G,B),
-                                        isEM=True,
-                                        isHAD=random.randint(0,1))
-                self.particles.append(new_particle)
+            # n = random.randint(5,50)
+            # for i in range(n):
+            #     color_random1 = random.random()
+            #     color_random2 = random.random()
+            #     color_random3 = random.random()
+            #     R = 0.5 - 0.5*color_random1 + 0.5*color_random2
+            #     G = 0.5 - 0.5*color_random2 + 0.5*color_random3
+            #     B = 0.5 - 0.5*color_random3 + 0.5*color_random1
+            #     new_particle = Particle(pt=17000 + random.random()*83000,
+            #                             eta=(random.random()-0.5)*4.5,
+            #                             phi=random.random()*2*math.pi,
+            #                             color=(R,G,B),
+            #                             isEM=True,
+            #                             isHAD=random.randint(0,1))
+            #     self.particles.append(new_particle)
+
+            new_jet = Jet(50000, 0.0, 0)
+            new_tau = Tau(25000, 0.0, math.pi)
+            new_el  = Electron(25000, 0.5, math.pi/2)
+            new_mu  = Muon(25000, -2.5, 3*math.pi/2)
+            new_ph  = Photon(25000, -0.8, math.pi/2)
+            new_met = MET(25000, 3*math.pi/2)
+
+            self.particles += new_jet.particles + new_tau.particles + new_el.particles + \
+               new_mu.particles + new_ph.particles + new_met.particles
             
             self.beam.start()
             self.allow_update = True
