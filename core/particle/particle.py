@@ -5,6 +5,7 @@ from pyglet import image
 from pyglet.gl import *
 
 from ..utils import *
+from ..config import *
 
 from lepton import Particle as lepParticle, ParticleGroup, default_system
 from lepton.renderer import BillboardRenderer
@@ -34,8 +35,6 @@ class Particle():
         spark = [self.spark_tex]
         
         ## Particle line domain
-        em_inner_radius = 1.5
-        
         cartesian_endpoint = rap_to_cart((em_inner_radius, self.eta, self.phi))
 
         ## Check that z is above em endcap
@@ -44,9 +43,10 @@ class Particle():
         self.calo_hit_EM = False
         self.calo_hit_HAD = False
         self.end_r = em_inner_radius
-        if abs(cartesian_endpoint[2]) >= 4.0:
+        em_inner_z = (1.0 - em_endcap_thickness/2)*eta_to_z((em_outer_radius, em_max_abs_eta))
+        if abs(cartesian_endpoint[2]) >= em_inner_z:
             self.in_barrel = True
-            self.end_r = (4.0/abs(cartesian_endpoint[2]))*em_inner_radius
+            self.end_r = (em_inner_z/abs(cartesian_endpoint[2]))*em_inner_radius
 
         cartesian_endpoint = rap_to_cart((self.r, self.eta, self.phi))
         
@@ -55,7 +55,7 @@ class Particle():
 
         ## A beam emitter
         self.particle = StaticEmitter(
-            rate= 750+500*abs(self.eta),
+            rate= (3.0/5)*particle_filling+(2.0/5)*particle_filling*abs(self.eta),
             position=self.particle_line,
             template=lepParticle(
                 size=(0.05,0.05,0.0),
@@ -77,11 +77,11 @@ class Particle():
     def update(self, dt):
         if self.is_travelling:
             if self.r < self.end_r:
-                self.r += 0.05*math.log(self.pt/1000.0)
-                self.particle_line.end_point = rap_to_cart((self.r, self.eta, self.phi))
+                self.r += particle_speed*math.log(self.pt/1000.0)
             else:
                 self.is_travelling = False
                 self.r = self.end_r
+            self.particle_line.end_point = rap_to_cart((self.r, self.eta, self.phi))
         
     
     def hide(self):

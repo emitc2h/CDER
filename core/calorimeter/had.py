@@ -1,6 +1,7 @@
 import calorimeter, ring, cell
 import pyglet
 import math
+from ..config import *
 
 ####################################################
 ## Makes an EM barrel                             ##
@@ -20,19 +21,22 @@ class HAD_Calorimeter(calorimeter.Calorimeter):
         self.calo_type = calorimeter.CALO_HAD
         
         ## Barrel parameters
-        self.barrel_inner_radius = 2.2
-        self.barrel_outer_radius = 3.0
-        self.barrel_max_abs_z    = 4.3
-        self.barrel_n_z          = 10
-        self.barrel_n_phi        = 15
+        self.barrel_inner_radius = had_inner_radius 
+        self.barrel_outer_radius = had_outer_radius 
+        self.barrel_max_abs_z    = had_max_abs_z
+        self.barrel_n_z          = had_eta_divisions
+        self.barrel_n_phi        = had_phi_divisions
 
+        ## Instantiate barrel rings
+        full_delta_z = self.barrel_max_abs_z*2 / (self.barrel_n_z - 1)
+        z_width = 0.9*full_delta_z
 
         ## Endcap parameters
-        self.endcap_inner_radius = 0.4
-        self.endcap_outer_radius = 3.0
-        self.endcap_max_abs_z    = 5.26
-        self.endcap_z_width      = 0.86
-        self.endcap_n_phi        = 15
+        self.endcap_inner_radius = 0.20*self.barrel_inner_radius
+        self.endcap_outer_radius = self.barrel_outer_radius
+        self.endcap_max_abs_z    = self.barrel_max_abs_z + full_delta_z
+        self.endcap_z_width      = z_width
+        self.endcap_n_phi        = self.barrel_n_phi
 
 
         ## Aspect, color and transparency
@@ -64,11 +68,6 @@ class HAD_Calorimeter(calorimeter.Calorimeter):
         pyglet.clock.schedule_once(A_ring.set_in_motion, self.coalesce_A_side)
 
         self.rings.append(A_ring)
-
-
-        ## Instantiate barrel rings
-        full_delta_z = self.barrel_max_abs_z*2 / (self.barrel_n_z - 1)
-        z_width = 0.9*full_delta_z
         
         for i in range(self.barrel_n_z):
             z = self.barrel_max_abs_z - i*full_delta_z

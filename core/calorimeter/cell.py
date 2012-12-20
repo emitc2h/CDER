@@ -26,8 +26,8 @@ class Cell():
         self.geometry = geometry
         
         if self.geometry == GEO_PROJECTIVE:
-            self.radius_inner = parameters[0]
-            self.radius_outer = parameters[1]
+            self.inner_radius = parameters[0]
+            self.outer_radius = parameters[1]
             self.eta_center   = parameters[2]
             self.eta_width    = parameters[3]
             self.phi_center   = parameters[4]
@@ -35,8 +35,8 @@ class Cell():
             self.calculate_coordinates_projective()
 
         elif self.geometry == GEO_CYLINDRICAL:
-            self.radius_inner = parameters[0]
-            self.radius_outer = parameters[1]
+            self.inner_radius = parameters[0]
+            self.outer_radius = parameters[1]
             self.z_center     = parameters[2]
             self.z_width      = parameters[3]
             self.phi_center   = parameters[4]
@@ -56,15 +56,15 @@ class Cell():
     def calculate_coordinates_projective(self):
 
         ## Calculate the coordinates of the 8 corners
-        raw_outer_1 = (self.radius_outer, self.eta_center-self.eta_width/2.0, self.phi_center-self.phi_width/2.0)
-        raw_outer_2 = (self.radius_outer, self.eta_center+self.eta_width/2.0, self.phi_center-self.phi_width/2.0)
-        raw_outer_3 = (self.radius_outer, self.eta_center+self.eta_width/2.0, self.phi_center+self.phi_width/2.0)
-        raw_outer_4 = (self.radius_outer, self.eta_center-self.eta_width/2.0, self.phi_center+self.phi_width/2.0)
+        raw_outer_1 = (self.outer_radius, self.eta_center-self.eta_width/2.0, self.phi_center-self.phi_width/2.0)
+        raw_outer_2 = (self.outer_radius, self.eta_center+self.eta_width/2.0, self.phi_center-self.phi_width/2.0)
+        raw_outer_3 = (self.outer_radius, self.eta_center+self.eta_width/2.0, self.phi_center+self.phi_width/2.0)
+        raw_outer_4 = (self.outer_radius, self.eta_center-self.eta_width/2.0, self.phi_center+self.phi_width/2.0)
 
-        raw_inner_1 = (self.radius_inner, self.eta_center-self.eta_width/2.0, self.phi_center-self.phi_width/2.0)
-        raw_inner_2 = (self.radius_inner, self.eta_center+self.eta_width/2.0, self.phi_center-self.phi_width/2.0)
-        raw_inner_3 = (self.radius_inner, self.eta_center+self.eta_width/2.0, self.phi_center+self.phi_width/2.0)
-        raw_inner_4 = (self.radius_inner, self.eta_center-self.eta_width/2.0, self.phi_center+self.phi_width/2.0)
+        raw_inner_1 = (self.inner_radius, self.eta_center-self.eta_width/2.0, self.phi_center-self.phi_width/2.0)
+        raw_inner_2 = (self.inner_radius, self.eta_center+self.eta_width/2.0, self.phi_center-self.phi_width/2.0)
+        raw_inner_3 = (self.inner_radius, self.eta_center+self.eta_width/2.0, self.phi_center+self.phi_width/2.0)
+        raw_inner_4 = (self.inner_radius, self.eta_center-self.eta_width/2.0, self.phi_center+self.phi_width/2.0)
 
         self.outer_1 = rap_to_cart(raw_outer_1)
         self.outer_2 = rap_to_cart(raw_outer_2)
@@ -76,10 +76,10 @@ class Cell():
         self.inner_3 = rap_to_cart(raw_inner_3)
         self.inner_4 = rap_to_cart(raw_inner_4)
 
-        self.z_center = eta_to_z(((self.radius_inner+self.radius_outer)/2, self.eta_center))
+        self.z_center = eta_to_z(((self.inner_radius+self.outer_radius)/2, self.eta_center))
 
-        z_lo = eta_to_z(((self.radius_inner+self.radius_outer)/2, self.eta_center - self.eta_width))
-        z_hi = eta_to_z(((self.radius_inner+self.radius_outer)/2, self.eta_center + self.eta_width))
+        z_lo = eta_to_z(((self.inner_radius+self.outer_radius)/2, self.eta_center - self.eta_width))
+        z_hi = eta_to_z(((self.inner_radius+self.outer_radius)/2, self.eta_center + self.eta_width))
 
         self.z_width = abs(z_lo - z_hi)
 
@@ -87,15 +87,15 @@ class Cell():
     def calculate_coordinates_cylindrical(self):
 
         ## Calculate the coordinates of the 8 corners
-        raw_outer_1 = (self.radius_outer, self.z_center-self.z_width/2.0, self.phi_center-self.phi_width/2.0)
-        raw_outer_2 = (self.radius_outer, self.z_center+self.z_width/2.0, self.phi_center-self.phi_width/2.0)
-        raw_outer_3 = (self.radius_outer, self.z_center+self.z_width/2.0, self.phi_center+self.phi_width/2.0)
-        raw_outer_4 = (self.radius_outer, self.z_center-self.z_width/2.0, self.phi_center+self.phi_width/2.0)
+        raw_outer_1 = (self.outer_radius, self.z_center-self.z_width/2.0, self.phi_center-self.phi_width/2.0)
+        raw_outer_2 = (self.outer_radius, self.z_center+self.z_width/2.0, self.phi_center-self.phi_width/2.0)
+        raw_outer_3 = (self.outer_radius, self.z_center+self.z_width/2.0, self.phi_center+self.phi_width/2.0)
+        raw_outer_4 = (self.outer_radius, self.z_center-self.z_width/2.0, self.phi_center+self.phi_width/2.0)
 
-        raw_inner_1 = (self.radius_inner, self.z_center-self.z_width/2.0, self.phi_center-self.phi_width/2.0)
-        raw_inner_2 = (self.radius_inner, self.z_center+self.z_width/2.0, self.phi_center-self.phi_width/2.0)
-        raw_inner_3 = (self.radius_inner, self.z_center+self.z_width/2.0, self.phi_center+self.phi_width/2.0)
-        raw_inner_4 = (self.radius_inner, self.z_center-self.z_width/2.0, self.phi_center+self.phi_width/2.0)
+        raw_inner_1 = (self.inner_radius, self.z_center-self.z_width/2.0, self.phi_center-self.phi_width/2.0)
+        raw_inner_2 = (self.inner_radius, self.z_center+self.z_width/2.0, self.phi_center-self.phi_width/2.0)
+        raw_inner_3 = (self.inner_radius, self.z_center+self.z_width/2.0, self.phi_center+self.phi_width/2.0)
+        raw_inner_4 = (self.inner_radius, self.z_center-self.z_width/2.0, self.phi_center+self.phi_width/2.0)
 
         self.outer_1 = cyl_to_cart(raw_outer_1)
         self.outer_2 = cyl_to_cart(raw_outer_2)
@@ -107,10 +107,10 @@ class Cell():
         self.inner_3 = cyl_to_cart(raw_inner_3)
         self.inner_4 = cyl_to_cart(raw_inner_4)
 
-        self.eta_center = z_to_eta(((self.radius_inner+self.radius_outer)/2, self.z_center))
+        self.eta_center = z_to_eta(((self.inner_radius+self.outer_radius)/2, self.z_center))
 
-        eta_lo = z_to_eta(((self.radius_inner+self.radius_outer)/2, self.z_center - self.z_width))
-        eta_hi = z_to_eta(((self.radius_inner+self.radius_outer)/2, self.z_center + self.z_width))
+        eta_lo = z_to_eta(((self.inner_radius+self.outer_radius)/2, self.z_center - self.z_width))
+        eta_hi = z_to_eta(((self.inner_radius+self.outer_radius)/2, self.z_center + self.z_width))
 
         self.eta_width = abs(eta_lo - eta_hi)
 

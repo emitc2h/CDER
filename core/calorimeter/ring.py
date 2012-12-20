@@ -16,8 +16,8 @@ class Ring():
 
         self.geometry = geometry
         
-        self.radius_inner = parameters[0]
-        self.radius_outer = parameters[1]
+        self.inner_radius = parameters[0]
+        self.outer_radius = parameters[1]
         self.z_center     = parameters[2]
         self.z_width      = parameters[3]
 
@@ -34,7 +34,7 @@ class Ring():
             self.y_angle  = 0.0
         else:
             self.y_angle  = math.atan2(self.z_center-self.z_width/2,
-                                       self.radius_outer)
+                                       self.outer_radius)
         self.n = n
         self.cells = []
 
@@ -53,8 +53,8 @@ class Ring():
 				
             phi_center = i*full_delta_phi
 
-            new_cell = cell.Cell((self.radius_inner,
-                                  self.radius_outer,
+            new_cell = cell.Cell((self.inner_radius,
+                                  self.outer_radius,
                                   self.z_center,
                                   self.z_width,
                                   phi_center,

@@ -4,6 +4,8 @@ import time
 from pyglet import image
 from pyglet.gl import *
 
+from ..config import *
+
 from lepton import Particle, ParticleGroup, default_system
 from lepton.renderer import BillboardRenderer
 from lepton.texturizer import SpriteTexturizer
@@ -25,9 +27,9 @@ class Beamline():
 
         ## Beam parameters
         self.incoming = False
-        self.beam_length = 8.0
+        self.beam_length = beam_speed
         self.beam_start  = 100.0 + self.beam_length
-        self.beam_speed  = 8.0
+        self.beam_speed  = beam_speed
         
         ## A beam domain
         self.A_beam_position = -self.beam_start

@@ -1,6 +1,8 @@
 import calorimeter, ring, cell
 import pyglet
 import math
+from ..utils import eta_to_z
+from ..config import *
 
 ####################################################
 ## Makes an EM barrel                             ##
@@ -20,19 +22,19 @@ class EM_Calorimeter(calorimeter.Calorimeter):
         self.calo_type = calorimeter.CALO_EM
         
         ## Barrel parameters
-        self.barrel_inner_radius = 1.5
-        self.barrel_outer_radius = 1.95
-        self.barrel_max_abs_eta  = 1.475
-        self.barrel_n_eta        = 13
-        self.barrel_n_phi        = 30
+        self.barrel_inner_radius = em_inner_radius 
+        self.barrel_outer_radius = em_outer_radius 
+        self.barrel_max_abs_eta  = em_max_abs_eta  
+        self.barrel_n_eta        = em_eta_divisions
+        self.barrel_n_phi        = em_phi_divisions
 
         
         ## Endcaps parameters
-        self.endcap_inner_radius = 0.4
-        self.endcap_outer_radius = 1.4
-        self.endcap_max_abs_z    = 4.3
-        self.endcap_z_width      = 0.6
-        self.endcap_n_phi        = 30
+        self.endcap_inner_radius = 0.20*self.barrel_inner_radius
+        self.endcap_outer_radius = 0.95*self.barrel_inner_radius
+        self.endcap_max_abs_z    = eta_to_z((self.barrel_outer_radius, self.barrel_max_abs_eta))
+        self.endcap_z_width      = em_endcap_thickness*self.endcap_max_abs_z
+        self.endcap_n_phi        = self.barrel_n_phi
 
         
         ## Aspect, color and transparency

@@ -31,7 +31,7 @@ class Calorimeter():
         for ring in self.rings:
 
             ## Find out where the camera is looking at in a perpendicular direction to the beamline
-            split_angle = math.atan2(ring.radius_outer,
+            split_angle = math.atan2(ring.outer_radius,
                                      -self.r_camera*math.sin(a)) - math.pi/2
 
             ## Draw all rings after that point
@@ -43,7 +43,7 @@ class Calorimeter():
         for ring in reversed(self.rings):
 
             ## Find out where the camera is looking at in a perpendicular direction to the beamline
-            split_angle = math.atan2(ring.radius_outer,
+            split_angle = math.atan2(ring.outer_radius,
                                      -self.r_camera*math.sin(a)) - math.pi/2
 
             ## Draw all rings before that point
@@ -76,7 +76,7 @@ class Calorimeter():
                           particle.isHAD and self.calo_type == CALO_HAD:
                             if particle.in_barrel:
                                 dphi = particle.dphi(cell)
-                                if particle.r < cell.radius_outer and particle.r > cell.radius_inner and \
+                                if particle.r < cell.outer_radius and particle.r > cell.inner_radius and \
                                   dphi < cell.phi_width/1.8 and particle.eta*cell.eta_center > 0:
                                     target_cells.append(cell)
                             else:
