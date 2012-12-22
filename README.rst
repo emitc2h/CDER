@@ -39,9 +39,9 @@ and then launch collider::
 
     python-32 Collider.py
 
-Pressing the right(left) arrow key lets you navigate to the next event
-in the tree. Pressing the up/down key gives you a randomly selected
-event.
+Pressing the right(left) arrow key lets you navigate to the
+next(previous) event in the tree. Pressing the up/down key gives you a
+randomly selected event.
 
 Click and drag to rotate around the scene, wheel up/down to zoom
 in/out.
