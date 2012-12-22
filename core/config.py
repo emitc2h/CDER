@@ -4,7 +4,7 @@ Input File
 ===========================================================
 """
 
-filename = 'LHProcessorCN.VBFH125.root'
+filename = 'LHProcessorCN.ttbar.root'
 treename = 'lh_test'
 
 
@@ -45,7 +45,7 @@ had_phi_divisions = 15
 
 ## ----------------------------------------------------- ##
 ## Particles
-beam_speed = 8.0
+beam_speed = 4.0
 particle_speed = 0.05
 particle_filling = 1000
 

@@ -28,7 +28,7 @@ class Beamline():
         ## Beam parameters
         self.incoming = False
         self.beam_length = beam_speed
-        self.beam_start  = 100.0 + self.beam_length
+        self.beam_start  = beam_speed*12.0 + self.beam_length/2.0
         self.beam_speed  = beam_speed
         
         ## A beam domain
