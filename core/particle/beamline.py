@@ -71,11 +71,22 @@ class Beamline():
             renderer=BillboardRenderer(SpriteTexturizer(self.spark_tex.get_texture().id))
             )
         
-        self.collision = StaticEmitter(
+        self.collision_charged = StaticEmitter(
             template=Particle(
                 position=(0, 0, 0), 
-                color=(1.0 ,0.7, 0.0), 
-                size=(0.1, 0.1, 0)),
+                color=(0.65, 0.25, 0.0), 
+                size=(0.05, 0.05, 0)),
+            deviation=Particle(
+        #position=(0.05, 0.05, 0.05), 
+                velocity=(2.0, 2.0, 2.0),
+                age=0.5)
+            )
+
+        self.collision_neutral = StaticEmitter(
+            template=Particle(
+                position=(0, 0, 0), 
+                color=(0.40, 0.45, 0.50), 
+                size=(0.05, 0.05, 0)),
             deviation=Particle(
         #position=(0.05, 0.05, 0.05), 
                 velocity=(2.0, 2.0, 2.0),
@@ -134,4 +145,5 @@ class Beamline():
 
 
     def collide(self,dt):
-        self.collision.emit(500, self.colsparks)
+        self.collision_charged.emit(1200, self.colsparks)
+        self.collision_neutral.emit(800, self.colsparks)
