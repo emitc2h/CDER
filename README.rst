@@ -55,4 +55,5 @@ What does it look like?
 -----------------------
 
 .. image:: https://bitbucket.org/emitc2h/collider/raw/6ca01897d2fc0215cfc426d34ed7b2b0c2f2fbda/example.png
-   :scale: 50 %
+   :scale: 30 %
+   :align: center
