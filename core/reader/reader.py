@@ -3,6 +3,7 @@ from ROOT import TTree, TFile, gROOT
 gROOT.ProcessLine('.L addVectorToROOT.C+')
 
 import random as rand
+import copy
 
 from ..particle.jet import Jet
 from ..particle.tau import Tau
@@ -14,16 +15,13 @@ from ..particle.met import MET
 
 class Reader():
 
-    def __init__(self, file_path, tree_name, cut_string):
+    def __init__(self, file_path, tree_name):
 
         ## Load the file
         self.file = TFile(file_path)
 
         ## Load the tree
         self.tree = self.file.Get(tree_name)
-
-        ## Apply cuts
-        #self.tree = self.full_tree.CopyTree(cut_string)
 
         ## Tree navigation
         self.entries = self.tree.GetEntries()
@@ -52,7 +50,7 @@ class Reader():
         self.event_muons     = []
         self.event_photons   = []
         self.event_met       = None
-        
+
 
     def next(self):
 
@@ -62,9 +60,9 @@ class Reader():
             self.event += 1
             self.tree.GetEntry(self.event)
 
-        ## Get new particle kinematics
-        self.get_particles()
-        self.make_particles()
+            ## Get new particle kinematics
+            self.get_particles()
+            self.make_particles()
 
         return self.event_particles
         
@@ -74,13 +72,13 @@ class Reader():
 
         self.reset()
         
-        if self.event > 0:
+        if self.event > 1:
             self.event -= 1
             self.tree.GetEntry(self.event)
 
-        ## Get new particle kinematics
-        self.get_particles()
-        self.make_particles()
+            ## Get new particle kinematics
+            self.get_particles()
+            self.make_particles()
 
         return self.event_particles
 

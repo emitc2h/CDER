@@ -1,18 +1,15 @@
 from particle import Particle
+from object import Object
 import random, math
 
-class Jet():
+class Jet(Object):
 
     def __init__(self, pt, eta, phi):
 
-        self.pt  = pt
-        self.eta = eta
-        self.phi = phi
+        Object.__init__(self, pt, eta, phi)
 
         self.color_charged = (0.65, 0.25, 0.0)
         self.color_neutral = (0.40, 0.45, 0.50)
-        
-        self.particles = []
 
         self.generate()
         

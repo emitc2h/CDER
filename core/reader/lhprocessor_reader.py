@@ -2,8 +2,8 @@ from reader import Reader
 
 class LHProcessor_Reader(Reader):
 
-    def __init__(self, file_path, tree_name, cut_string):
-        Reader.__init__(self, file_path, tree_name, cut_string)
+    def __init__(self, file_path, tree_name):
+        Reader.__init__(self, file_path, tree_name)
 
     def get_jets(self):
         for jet in self.tree.jet_fourvect:

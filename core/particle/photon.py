@@ -1,12 +1,11 @@
 from particle import Particle
+from object import Object
 
-class Photon():
+class Photon(Object):
 
     def __init__(self, pt, eta, phi):
 
-        self.pt  = pt
-        self.eta = eta
-        self.phi = phi
+        Object.__init__(self, pt, eta, phi)
 
         self.color = (0.40, 0.45, 0.50)
 

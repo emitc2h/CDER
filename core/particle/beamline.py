@@ -42,7 +42,7 @@ class Beamline():
             position=self.A_beam_section,
             template=Particle(
                 size=(0.1,0.1,0.0),
-                color=(0.8,0.1,0.1)
+                color=(0.8,0.2,0.1)
                 )
             )
 
@@ -57,7 +57,7 @@ class Beamline():
             position=self.C_beam_section,
             template=Particle(
                 size=(0.1,0.1,0.0),
-                color=(0.1,0.8,0.1)
+                color=(0.8,0.2,0.1)
                 )
             )
 

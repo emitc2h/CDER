@@ -1,12 +1,11 @@
 from particle import Particle
+from object import Object
 
-class Muon():
+class Muon(Object):
 
     def __init__(self, pt, eta, phi):
 
-        self.pt  = pt
-        self.eta = eta
-        self.phi = phi
+        Object.__init__(self, pt, eta, phi)
 
         self.color = (0.6, 0.0, 0.2)
 

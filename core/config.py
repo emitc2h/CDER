@@ -5,8 +5,7 @@ Input File
 """
 
 filename = 'LHProcessorCN.VBFH125.root'
-treename = 'lh_train'
-cuts     = ''
+treename = 'lh_test'
 
 
 """
