@@ -7,12 +7,13 @@ from lepton.controller import Lifetime, Movement, Fader
 
 import math, random
 
-from particle.jet import Jet
-from particle.tau import Tau
-from particle.electron import Electron
-from particle.muon import Muon
-from particle.photon import Photon
-from particle.met import MET
+# from particle.jet import Jet
+# from particle.tau import Tau
+# from particle.electron import Electron
+# from particle.muon import Muon
+# from particle.photon import Photon
+# from particle.met import MET
+from particle.particle import Particle
 import utils
 #from config import reader
 
@@ -235,7 +236,7 @@ class Display(pyglet.window.Window):
             # if symbol == key.UP or symbol == key.DOWN:
             #     self.particles = reader.random()
             
-            Generate a random set of particles
+            ## Generate a random set of particles
             n = random.randint(5,50)
             for i in range(n):
                 color_random1 = random.random()
