@@ -18,7 +18,7 @@ class Jet():
         
         
     def generate(self):
-        n_max = int(4*math.log(self.pt/1000.0))
+        n_max = int(math.log(self.pt/1000.0))
         n_charged = random.randint(2,n_max)
         n_neutral = random.randint(1,n_max-n_max/2)
         n = n_charged + n_neutral

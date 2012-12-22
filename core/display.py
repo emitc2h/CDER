@@ -7,15 +7,17 @@ from lepton.controller import Lifetime, Movement, Fader
 
 import math, random
 
-# from particle.jet import Jet
-# from particle.tau import Tau
-# from particle.electron import Electron
-# from particle.muon import Muon
-# from particle.photon import Photon
-# from particle.met import MET
+from particle.jet import Jet
+from particle.tau import Tau
+from particle.electron import Electron
+from particle.muon import Muon
+from particle.photon import Photon
+from particle.met import MET
 from particle.particle import Particle
 import utils
-#from config import reader
+
+from reader.lhprocessor_reader import LHProcessor_Reader as selected_reader
+from config import filename, treename, cuts
 
 ####################################################
 ## A class inheriting from the pyglet window      ##
@@ -40,6 +42,9 @@ class Display(pyglet.window.Window):
         self.calorimeters = calorimeters
         self.particles = particles
         self.beam = beam
+
+        ## Particle reader
+        self.reader = selected_reader(filename, treename, cuts)
 
         ## Controllers to limit redundant execution
         self.allow_update = False
@@ -227,31 +232,31 @@ class Display(pyglet.window.Window):
 
             self.particles = []
 
-            # if symbol == key.LEFT:
-            #     self.particles = reader.previous()
+            if symbol == key.LEFT:
+                self.particles = self.reader.previous()
 
-            # if symbol == key.RIGHT:
-            #     self.particles = reader.next()
+            if symbol == key.RIGHT:
+                self.particles = self.reader.next()
 
-            # if symbol == key.UP or symbol == key.DOWN:
-            #     self.particles = reader.random()
+            if symbol == key.UP or symbol == key.DOWN:
+                self.particles = self.reader.random()
             
             ## Generate a random set of particles
-            n = random.randint(5,50)
-            for i in range(n):
-                color_random1 = random.random()
-                color_random2 = random.random()
-                color_random3 = random.random()
-                R = 0.5 - 0.5*color_random1 + 0.5*color_random2
-                G = 0.5 - 0.5*color_random2 + 0.5*color_random3
-                B = 0.5 - 0.5*color_random3 + 0.5*color_random1
-                new_particle = Particle(pt=17000 + random.random()*83000,
-                                        eta=(random.random()-0.5)*4.5,
-                                        phi=random.random()*2*math.pi,
-                                        color=(R,G,B),
-                                        isEM=True,
-                                        isHAD=random.randint(0,1))
-                self.particles.append(new_particle)
+            # n = random.randint(5,50)
+            # for i in range(n):
+            #     color_random1 = random.random()
+            #     color_random2 = random.random()
+            #     color_random3 = random.random()
+            #     R = 0.5 - 0.5*color_random1 + 0.5*color_random2
+            #     G = 0.5 - 0.5*color_random2 + 0.5*color_random3
+            #     B = 0.5 - 0.5*color_random3 + 0.5*color_random1
+            #     new_particle = Particle(pt=17000 + random.random()*83000,
+            #                             eta=(random.random()-0.5)*4.5,
+            #                             phi=random.random()*2*math.pi,
+            #                             color=(R,G,B),
+            #                             isEM=True,
+            #                             isHAD=random.randint(0,1))
+            #     self.particles.append(new_particle)
 
             # new_jet = Jet(50000, 0.0, 0)
             # new_tau = Tau(25000, 0.0, math.pi)

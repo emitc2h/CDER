@@ -23,7 +23,7 @@ class Reader():
         self.tree = self.file.Get(tree_name)
 
         ## Apply cuts
-        self.tree = self.tree.CopyTree(cut_string)
+        #self.tree = self.full_tree.CopyTree(cut_string)
 
         ## Tree navigation
         self.entries = self.tree.GetEntries()
@@ -32,7 +32,7 @@ class Reader():
         ## Particles to display
         self.event_particles = []
 
-        ## Complex particle holders
+        ## particle data holders
         self.event_jets      = []
         self.event_taus      = []
         self.event_electrons = []
@@ -41,10 +41,22 @@ class Reader():
         self.event_met       = None
 
 
-    def next(self):
-
+    def reset(self):
         ## Empty the event particles
         self.event_particles = []
+
+        ## Empty particle data holders
+        self.event_jets      = []
+        self.event_taus      = []
+        self.event_electrons = []
+        self.event_muons     = []
+        self.event_photons   = []
+        self.event_met       = None
+        
+
+    def next(self):
+
+        self.reset()
         
         if self.event < self.entries:
             self.event += 1
@@ -60,8 +72,7 @@ class Reader():
             
     def previous(self):
 
-        ## Empty the event particles
-        self.event_particles = []
+        self.reset()
         
         if self.event > 0:
             self.event -= 1
@@ -76,8 +87,7 @@ class Reader():
 
     def random(self):
 
-        ## Empty the event particles
-        self.event_particles = []
+        self.reset()
         
         self.event = rand.randint(0, self.entries)
         self.tree.GetEntry(self.event)
@@ -118,27 +128,30 @@ class Reader():
 
     def make_particles(self):
         
-        for jet in self.jets:
+        for jet in self.event_jets:
             new_jet = Jet(jet[0], jet[1], jet[2])
             self.event_particles += new_jet.particles
 
-        for tau in self.taus:
+        for tau in self.event_taus:
             new_tau = Tau(tau[0], tau[1], tau[2])
             self.event_particles += new_tau.particles
 
-        for el in self.electrons:
+        for el in self.event_electrons:
             new_el = Electron(el[0], el[1], el[2])
             self.event_particles += new_el.particles
 
-        for mu in self.muons:
+        for mu in self.event_muons:
             new_mu = Muon(mu[0], mu[1], mu[2])
             self.event_particles += new_mu.particles
 
-        for ph in self.photons:
-            new_ph = Photon(el[0], el[1], el[2])
+        for ph in self.event_photons:
+            new_ph = Photon(ph[0], ph[1], ph[2])
             self.event_particles += new_ph.particles
 
-        met = MET(self.event_met[0], self.event_met[1])
-        self.event_particles += met.particles
+        try:
+            met = MET(self.event_met[0], self.event_met[1])
+            self.event_particles += met.particles
+        except TypeError:
+            pass
             
 
