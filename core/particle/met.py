@@ -1,5 +1,6 @@
 from particle import Particle
 from object import Object
+import math
 
 class MET(Object):
 
@@ -7,13 +8,15 @@ class MET(Object):
 
         Object.__init__(self, pt, 0.0, phi)
 
-        self.color = (0.0, 0.8, 0.0)
+        intensity = 0.01*math.log(self.pt/1000.0)
+        
+        self.color = (0.0, intensity, 0.0)
 
-        for eta in range(-10, 10):
-            self.particles.append(Particle(self.pt,
-                                   eta*0.02,
-                                   self.phi,
-                                   self.color,
-                                   isEM=False, 
-                                   isHAD=False,
-                                   is_min_ion=False))
+        self.particles.append(Particle(self.pt,
+                                       0.0,
+                                       self.phi,
+                                       self.color,
+                                       isEM=False, 
+                                       isHAD=False,
+                                       is_min_ion=False,
+                                       wide=True))

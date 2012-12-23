@@ -16,7 +16,7 @@ from lepton import domain
 
 class Particle():
 
-    def __init__(self, pt, eta, phi, color, isEM=True, isHAD=True, is_min_ion=False):
+    def __init__(self, pt, eta, phi, color, isEM=True, isHAD=True, is_min_ion=False, wide=False):
 
         self.r   = 0.0
         self.pt  = pt
@@ -65,12 +65,17 @@ class Particle():
         rate = (3.0/5)*particle_filling+(2.0/5)*particle_filling*abs(self.eta)
         if self.is_min_ion:
             rate *= 4
-        
+
+        ## particle beam width
+        width =(0.05,0.05,0.0)
+        if wide:
+            width =(0.5,0.5,0.0)
+            
         self.particle = StaticEmitter(
             rate=rate,
             position=self.particle_line,
             template=lepParticle(
-                size=(0.05,0.05,0.0),
+                size=width,
                 color=color
                 )
             )

@@ -127,7 +127,12 @@ class Reader():
     def make_particles(self):
         
         for jet in self.event_jets:
-            new_jet = Jet(jet[0], jet[1], jet[2])
+            btag = False
+            try:
+                btag = jet[3]
+            except IndexError:
+                pass
+            new_jet = Jet(jet[0], jet[1], jet[2], btag)
             self.event_particles += new_jet.particles
 
         for tau in self.event_taus:

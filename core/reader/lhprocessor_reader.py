@@ -6,8 +6,11 @@ class LHProcessor_Reader(Reader):
         Reader.__init__(self, file_path, tree_name)
 
     def get_jets(self):
-        for jet in self.tree.jet_fourvect:
-            self.event_jets.append((jet.Pt(), jet.Eta(), jet.Phi()))
+        njets = len( self.tree.jet_fourvect )
+        for i in range(njets):
+            jet = self.tree.jet_fourvect[i]
+            btag = (self.tree.jet_btag[i] > 0.722)
+            self.event_jets.append((jet.Pt(), jet.Eta(), jet.Phi(), btag))
 
     def get_taus(self):
         tau = self.tree.tau_fourvect

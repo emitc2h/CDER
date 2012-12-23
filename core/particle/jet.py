@@ -4,12 +4,14 @@ import random, math
 
 class Jet(Object):
 
-    def __init__(self, pt, eta, phi):
+    def __init__(self, pt, eta, phi, btag=False):
 
         Object.__init__(self, pt, eta, phi)
 
         self.color_charged = (0.65, 0.25, 0.0)
         self.color_neutral = (0.40, 0.45, 0.50)
+
+        self.btag = btag
 
         self.generate()
         
@@ -52,3 +54,15 @@ class Jet(Object):
                                         isHAD=False)
 
             self.particles.append(new_particle)
+
+        if self.btag:
+            new_particle = Particle(self.pt,
+                                    self.eta,
+                                    self.phi,
+                                    (0.0, 0.06, 0.06),
+                                    isEM=True, 
+                                    isHAD=True,
+                                    wide=True)
+
+            self.particles.append(new_particle)
+            
