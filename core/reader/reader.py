@@ -55,7 +55,7 @@ class Reader():
         self.event_met       = None
 
         ## Store teminal height for nice output
-        self.terminal_height = 30
+        self.terminal_height = 10
 
 
     def next(self):
@@ -128,6 +128,7 @@ class Reader():
         self.get_muons()
         self.get_photons()
         self.get_met()
+        self.get_extra_information()
 
 
     def get_extra_information(self):
@@ -225,11 +226,35 @@ class Reader():
 
         try:
             print '| \033[32mMET\033[0m        | {:<12.2f}| {:<12}| {:<12.2f}|'.format(self.event_met[0]/1000.0,
-                                                                                   '----', 
-                                                                                   self.event_met[1])
+                                                                                       '----', 
+                                                                                       self.event_met[1])
         except IndexError:
             pass
 
-        print '----'*14
-        print '\n'*(self.terminal_height-n_lines)
+        print '===='*14
+
+        ## Print extra information
+        if len(self.extra_information) > 0:
+
+            max_word_length = 0
+            
+            for key in self.extra_information.iterkeys():
+                key_word_length = len(key)
+                if key_word_length > max_word_length:
+                    max_word_length = key_word_length
+
+            print '\n'*(15-n_lines)
+            print '='*(max_word_length+21)
+            title = '|{:<%d}|' % (max_word_length+19)
+            print title.format('Extra Information')
+            print '-'*(max_word_length+21)
+
+            for key in sorted(self.extra_information.iterkeys()):
+                n_lines += 1
+                information_string = '| {:<%s}| {:<14%s} |' % (max_word_length+1, self.extra_information[key][1])
+                print information_string.format(key, self.extra_information[key][0])
+
+            print '='*(max_word_length+21)
+        
+        print '\n'*(self.terminal_height)
 

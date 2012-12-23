@@ -34,5 +34,40 @@ class LHProcessor_Reader(Reader):
     def get_met(self):
         self.event_met = (self.tree.MET_vect.Mod(), self.tree.MET_vect.Phi())
 
+    def get_extra_information(self):
+
+        ## Sphericity
+        self.extra_information['sphericity'] = (self.tree.sphericity, '.3f')
+
+        ## Met Phi Centrality
+        self.extra_information['MET phi centrality'] = (self.tree.met_phi_centrality, '.3f')
+
+        ## Resonance Pt
+        self.extra_information['tau-lep resonance Pt'] = (self.tree.resonance_pt_tau_lep/1000.0, '.3f')
+
+        ## dR
+        self.extra_information['tau-lep dR'] = (self.tree.dr_tau_lep, '.3f')
+
+        ## MMC mass
+        self.extra_information['tau-lep MMC mass'] = (self.tree.mass_mmc_tau_lep, '.3f')
+
+        ## transverse mass
+        self.extra_information['MET-lep transverse mass'] = (self.tree.mass_transverse_met_lep/1000.0, '.3f')
+
+        ## lepton eta centrality
+        self.extra_information['Lepton eta centrality'] = (self.tree.lep_centrality_j1_j2, '.3f')
+
+        ## Mjj
+        self.extra_information['VBF jets mass'] = (self.tree.mass_j1_j2/1000.0, '.3f')
+
+        ## eta product
+        self.extra_information['VBF jets eta product'] = (self.tree.eta_product_j1_j2, '.3f')
+
+        ## eta delta
+        self.extra_information['VBF jets eta delta'] = (self.tree.eta_delta_j1_j2, '.3f')
+
+        ## sum Pt
+        self.extra_information['Scalar sum visible Pt'] = (self.tree.sumPt/1000.0, '.3f')
+
 
             
