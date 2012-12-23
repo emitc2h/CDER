@@ -234,6 +234,8 @@ class Display(pyglet.window.Window):
 
             if symbol == key.UP or symbol == key.DOWN:
                 self.particles = self.reader.random()
+
+            self.reader.print_event()
             
             self.beam.start()
             self.allow_update = True

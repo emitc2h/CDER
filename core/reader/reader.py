@@ -122,6 +122,10 @@ class Reader():
         self.get_muons()
         self.get_photons()
         self.get_met()
+
+
+    def extra_information(self):
+        pass
         
 
     def make_particles(self):
@@ -157,4 +161,59 @@ class Reader():
         except TypeError:
             pass
             
+
+    def print_event(self):
+
+        print '===='*13
+        print 'Event   : {:<41d}|'.format(self.event)
+        
+        print '----'*13
+        print 'object   | {:<12}| {:<12}| {:<12}|'.format('pt [GeV]', 'eta', 'phi')
+        print '----'*13
+
+        for el in self.event_electrons:
+            print '\033[34melectron\033[0m | {:<12.2f}| {:<12.2f}| {:<12.2f}|'.format(el[0]/1000.0,
+                                                                                      el[1],
+                                                                                      el[2])
+
+        for mu in self.event_muons:
+            print '\033[35mmuon\033[0m     | {:<12.2f}| {:<12.2f}| {:<12.2f}|'.format(mu[0]/1000.0,
+                                                                                      mu[1],
+                                                                                      mu[2])
+        
+        for tau in self.event_taus:
+            print '\033[33mtau\033[0m      | {:<12.2f}| {:<12.2f}| {:<12.2f}|'.format(tau[0]/1000.0,
+                                                                                      tau[1],
+                                                                                      tau[2])
+
+        for ph in self.event_photons:
+            print '\033[34mphoton\033[0m   | {:<12.2f}| {:<12.2f}| {:<12.2f}|'.format(ph[0]/1000.0,
+                                                                                      ph[1],
+                                                                                      ph[2])
+
+        for jet in self.event_jets:
+            try:
+                if jet[3]:
+                    print '\033[36mjet\033[0m      | {:<12.2f}| {:<12.2f}| {:<12.2f}|'.format(jet[0]/1000.0,
+                                                                                              jet[1],
+                                                                                              jet[2])
+                else:
+                    print '\033[31mjet\033[0m      | {:<12.2f}| {:<12.2f}| {:<12.2f}|'.format(jet[0]/1000.0,
+                                                                                              jet[1],
+                                                                                              jet[2])
+                        
+            except IndexError:
+                print '\033[31mjet\033[0m      | {:<12.2f}| {:<12.2f}| {:<12.2f}|'.format(jet[0]/1000.0,
+                                                                                          jet[1],
+                                                                                          jet[2])
+
+        try:
+            print '\033[32mMET\033[0m      | {:<12.2f}| {:<12}| {:<12.2f}|'.format(self.event_met[0]/1000.0,
+                                                                                   '----', 
+                                                                                   self.event_met[1])
+        except IndexError:
+            pass
+
+        print '----'*13
+        print
 
