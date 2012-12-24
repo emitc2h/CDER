@@ -1,11 +1,9 @@
 .. image:: https://bitbucket.org/emitc2h/collider/raw/4ae7adec5db93d7e99c9a8fe8064eb223a0035e2/core/images/logo.png
-   :scale: 30 %
-   :align: left
 
 What is this?
 -------------
 
-A high-level event visualiser interfacing ROOT ntuples
+CDER (ColliDER) is a high-level event visualiser interfacing ROOT ntuples
 of a pre-determined format to an OpenGL graphics display.
 This package depends on ROOT, pyglet, py-lepton and PyOpenGL::
 
@@ -59,5 +57,3 @@ What does it look like?
 -----------------------
 
 .. image:: https://bitbucket.org/emitc2h/collider/raw/dd107417f5162fe84aef35c9b36e3b824c0834e6/example.png
-   :scale: 30 %
-   :align: center
