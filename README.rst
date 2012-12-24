@@ -1,3 +1,7 @@
+.. image:: https://bitbucket.org/emitc2h/collider/raw/4ae7adec5db93d7e99c9a8fe8064eb223a0035e2/core/images/logo.png
+   :scale: 30 %
+   :align: left
+
 What is this?
 -------------
 
