@@ -254,7 +254,7 @@ class Reader():
 
             print '\n'*(15-n_lines)
             print '='*(max_word_length+21)
-            title = '|{:<%d}|' % (max_word_length+19)
+            title = '| {:<%d} |' % (max_word_length+17)
             print title.format('Extra Information')
             print '-'*(max_word_length+21)
 
