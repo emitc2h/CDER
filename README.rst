@@ -1,4 +1,4 @@
-.. image:: https://bitbucket.org/emitc2h/collider/raw/4ae7adec5db93d7e99c9a8fe8064eb223a0035e2/core/images/logo.png
+.. image:: https://bitbucket.org/emitc2h/cder/raw/5f70f7b0e5362fef614f5abd90f326fc2854306f/core/images/logo.png
 
 What is this?
 -------------
@@ -54,4 +54,4 @@ useful if the refresh rate is not fast enough.
 What does it look like?
 -----------------------
 
-.. image:: https://bitbucket.org/emitc2h/collider/raw/dd107417f5162fe84aef35c9b36e3b824c0834e6/example.png
+.. image:: https://bitbucket.org/emitc2h/cder/raw/5f70f7b0e5362fef614f5abd90f326fc2854306f/core/images/example.png
