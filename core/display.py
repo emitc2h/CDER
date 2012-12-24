@@ -143,6 +143,9 @@ class Display(pyglet.window.Window):
         for calo in self.calorimeters:
             calo.update(dt)
 
+        ## Update interface
+        self.interface.update(dt)
+
         self.draw()
             
 
@@ -269,6 +272,9 @@ class Display(pyglet.window.Window):
             self.mouse_y_rotation = -90.0
             self.mouse_z_rotation = 0.0
             self.mouse_zoom = 15.0
+
+        if symbol == key.H:
+            self.interface.toggle_help()
             
 
         if symbol == key.LEFT or symbol == key.RIGHT or symbol == key.UP or symbol == key.DOWN:
