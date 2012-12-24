@@ -59,10 +59,11 @@ class Reader():
 
 
     def next(self):
-
-        self.reset()
         
         if self.event < self.entries:
+            
+            self.reset()
+            
             self.event += 1
             self.tree.GetEntry(self.event)
 
@@ -70,15 +71,18 @@ class Reader():
             self.get_particles()
             self.make_particles()
 
-        return self.event_particles
+            return self.event_particles
+        else:
+            return []
         
 
             
     def previous(self):
-
-        self.reset()
         
         if self.event > 1:
+
+            self.reset()
+            
             self.event -= 1
             self.tree.GetEntry(self.event)
 
@@ -86,7 +90,9 @@ class Reader():
             self.get_particles()
             self.make_particles()
 
-        return self.event_particles
+            return self.event_particles
+        else:
+            return []
 
 
     def random(self):
@@ -171,6 +177,9 @@ class Reader():
 
     def print_event(self):
 
+        if len(self.event_particles) == 0:
+            return
+        
         ## Clear terminal
         print chr(27) + "[2J"
         

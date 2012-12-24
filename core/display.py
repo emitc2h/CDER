@@ -13,6 +13,8 @@ import utils
 from reader.lhprocessor_reader import LHProcessor_Reader as selected_reader
 from config import filename, treename
 
+from core.interface import Interface
+
 ####################################################
 ## A class inheriting from the pyglet window      ##
 ## to display the openGL objects                  ##
@@ -33,12 +35,19 @@ class Display(pyglet.window.Window):
         self.mouse_z_rotation = -20.0
         self.mouse_zoom = 15.0
 
+        ## Window size
+        self.width=800
+        self.height=600
+
         self.calorimeters = calorimeters
         self.particles = particles
         self.beam = beam
 
         ## Particle reader
         self.reader = selected_reader(filename, treename)
+
+        ## Interface
+        self.interface = Interface(self.width, self.height)
 
         ## Controllers to limit redundant execution
         self.allow_update = False
@@ -54,8 +63,6 @@ class Display(pyglet.window.Window):
         """
         Setup the window size, and OpenGL drawing area
         """
-        self.width=800
-        self.height=600
         
         pyglet.clock.schedule_interval(self.update, 1.0/self.refresh_rate)
 
@@ -163,6 +170,36 @@ class Display(pyglet.window.Window):
         glLoadIdentity()
         gluPerspective(45.0, float(width) / float(height), 0.1, 100.0)
         glMatrixMode(GL_MODELVIEW)
+
+        self.interface.resize(width, height)
+
+
+
+    ## ---------------------------------------- ##
+    def mode_3D(self):
+        
+        glEnable(GL_BLEND)
+        glShadeModel(GL_SMOOTH)
+        glBlendFunc(GL_SRC_ALPHA,GL_ONE)
+        glHint(GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST);
+        glDisable(GL_DEPTH_TEST)
+
+        glMatrixMode(GL_PROJECTION)
+        glLoadIdentity()
+        gluPerspective(45.0, float(self.width) / float(self.height), 0.1, 100.0)
+        glMatrixMode(GL_MODELVIEW)
+        glLoadIdentity()
+
+
+    ## ---------------------------------------- ##
+    def mode_2D(self):
+        glDisable(GL_DEPTH_TEST) 
+        glMatrixMode(GL_PROJECTION)
+        glLoadIdentity()
+        gluOrtho2D(0, self.width, 0, self.height)
+        glMatrixMode(GL_MODELVIEW)
+        glLoadIdentity()
+    
         
         
     ## ---------------------------------------- ##
@@ -174,6 +211,8 @@ class Display(pyglet.window.Window):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glLoadIdentity()
 
+        self.mode_3D()
+        
         ## Position camera
         gluLookAt( 0.0,  0.0, -self.mouse_zoom,
                    0.0,  0.0,  0.0,
@@ -204,6 +243,13 @@ class Display(pyglet.window.Window):
             calo.phi_camera = theta_camera - math.pi/2
             calo.draw()
 
+        ## Display logo
+        self.mode_2D()
+        self.interface.draw()
+
+        self.mode_3D()
+        
+
 
     ## ---------------------------------------- ##
     def on_key_press(self, symbol, modifiers):
@@ -214,6 +260,17 @@ class Display(pyglet.window.Window):
         if symbol == key.ESCAPE:
             self.dispatch_event('on_close')
 
+        if symbol == key.A:
+            self.mouse_y_rotation = 0.0
+            self.mouse_z_rotation = 0.0
+            self.mouse_zoom = 15.0
+
+        if symbol == key.S:
+            self.mouse_y_rotation = -90.0
+            self.mouse_z_rotation = 0.0
+            self.mouse_zoom = 15.0
+            
+
         if symbol == key.LEFT or symbol == key.RIGHT or symbol == key.UP or symbol == key.DOWN:
 
             ## Remove existing particles
@@ -221,6 +278,7 @@ class Display(pyglet.window.Window):
                 particle.hide()
                 lepton_system.remove_group(particle.group)
                 lepton_system.remove_group(particle.sparks)
+            
             for calo in self.calorimeters:
                 calo.reset()
 
@@ -236,6 +294,6 @@ class Display(pyglet.window.Window):
                 self.particles = self.reader.random()
 
             self.reader.print_event()
-            
+
             self.beam.start()
             self.allow_update = True
