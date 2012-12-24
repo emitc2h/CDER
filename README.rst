@@ -54,6 +54,6 @@ useful if the refresh rate is not fast enough.
 What does it look like?
 -----------------------
 
-.. image:: https://bitbucket.org/emitc2h/collider/raw/6ca01897d2fc0215cfc426d34ed7b2b0c2f2fbda/example.png
+.. image:: https://bitbucket.org/emitc2h/collider/raw/dd107417f5162fe84aef35c9b36e3b824c0834e6/example.png
    :scale: 30 %
    :align: center
