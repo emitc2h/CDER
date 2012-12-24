@@ -1,7 +1,4 @@
-from ROOT import TTree, TFile, gROOT
-
-gROOT.ProcessLine('.L addVectorToROOT.C+')
-
+from ROOT import TTree, TFile
 import random as rand
 import copy
 

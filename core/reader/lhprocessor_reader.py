@@ -1,3 +1,6 @@
+from ROOT import gROOT
+gROOT.ProcessLine('.L addVectorToROOT.C+')
+
 from reader import Reader
 
 class LHProcessor_Reader(Reader):
