@@ -17,17 +17,16 @@ to recommend specific versions in the future here.
 
 On the other hand, all packages should be compiled in
 32-bits. py-lepton is not working very well in 64-bits, so ROOT must
-be compiled in 32-bits as well for Collider to work. I hope this will
-be resolved in the future.
+be compiled in 32-bits as well for CDER to work. I hope this will be
+resolved in the future.
 
 
 Important
 ---------
 
-The package does not run in 64-bits. Run in 32-bit mode
-(python-32). This is because of the nature of the super-fast random
-number generators in py-lepton, and the treatment of OpenGL graphics
-by pyglet.
+CDER does not run in 64-bits. Run in 32-bit mode (python-32). This is
+because of the nature of the super-fast random number generators in
+py-lepton, and the treatment of OpenGL graphics by pyglet.
 
 How does it work?
 -----------------
@@ -39,7 +38,7 @@ Simply specify an input file by setting in core/config.py::
 
 and then launch collider::
 
-    python-32 Collider.py
+    python-32 CDER.py
 
 Pressing the right(left) arrow key lets you navigate to the
 next(previous) event in the tree. Pressing the up/down key gives you a
