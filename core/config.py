@@ -4,7 +4,7 @@ Input File
 ===========================================================
 """
 
-filename = 'LHProcessorCN.data.root'
+filename = 'LHProcessorCN.VBFH125.root'
 treename = 'lh_test'
 
 

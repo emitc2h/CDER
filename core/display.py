@@ -49,11 +49,15 @@ class Display(pyglet.window.Window):
         ## Interface
         self.interface = Interface(self.width, self.height)
 
-        ## Controllers to limit redundant execution
+        ## Controllers
         self.allow_update = False
         
         self.refresh_rate = 30
         self.wait = 0
+
+        self.text_input_mode = False
+        self.negate_key      = False
+        self.input_string    = ''
         
         self.setup()
 
@@ -253,53 +257,87 @@ class Display(pyglet.window.Window):
         self.mode_3D()
         
 
+    ## ---------------------------------------- ##
+    def on_text(self, text):
+        if self.text_input_mode:
+            if self.negate_key:
+                self.negate_key = False
+            else:
+                self.input_string += text
+                self.interface.set_text(self.input_string)
+        
 
     ## ---------------------------------------- ##
     def on_key_press(self, symbol, modifiers):
         """
         Make sure everything disappears correctly
         """
-        
+
         if symbol == key.ESCAPE:
             self.dispatch_event('on_close')
 
-        if symbol == key.A:
-            self.mouse_y_rotation = 0.0
-            self.mouse_z_rotation = 0.0
-            self.mouse_zoom = 15.0
+        if symbol == key.ENTER:
+            self.text_input_mode = False
+            if self.interface.cut.opacity > 0:
+                self.interface.set_text('')
+                self.interface.toggle_cut()
 
-        if symbol == key.S:
-            self.mouse_y_rotation = -90.0
-            self.mouse_z_rotation = 0.0
-            self.mouse_zoom = 15.0
+        if self.text_input_mode:
+            if symbol == key.BACKSPACE:
+                self.input_string = self.input_string[0:len(self.input_string)-1]
+                self.interface.set_text(self.input_string)
 
-        if symbol == key.H:
-            self.interface.toggle_help()
+            if symbol == key.SPACE:
+                self.input_string += ' '
+                self.interface.set_text(self.input_string)
+
+        if not self.text_input_mode:
+
+            if symbol == key.C:
+                self.text_input_mode = True
+                self.negate_key = True
+                self.input_string    = ''
+                self.interface.toggle_cut()
+
+            if symbol == key.R:
+                self.reader.reset_cut()
+
+            if symbol == key.A:
+                self.mouse_y_rotation = 0.0
+                self.mouse_z_rotation = 0.0
+                self.mouse_zoom = 15.0
+
+            if symbol == key.S:
+                self.mouse_y_rotation = -90.0
+                self.mouse_z_rotation = 0.0
+                self.mouse_zoom = 15.0
+
+            if symbol == key.H:
+                self.interface.toggle_help()
+
+            if symbol == key.LEFT or symbol == key.RIGHT or symbol == key.UP or symbol == key.DOWN:
+
+                ## Remove existing particles
+                for particle in self.particles:
+                    particle.hide()
+                    lepton_system.remove_group(particle.group)
+                    lepton_system.remove_group(particle.sparks)
             
+                for calo in self.calorimeters:
+                    calo.reset()
 
-        if symbol == key.LEFT or symbol == key.RIGHT or symbol == key.UP or symbol == key.DOWN:
+                self.particles = []
 
-            ## Remove existing particles
-            for particle in self.particles:
-                particle.hide()
-                lepton_system.remove_group(particle.group)
-                lepton_system.remove_group(particle.sparks)
-            
-            for calo in self.calorimeters:
-                calo.reset()
+                if symbol == key.LEFT:
+                    self.particles = self.reader.previous()
 
-            self.particles = []
+                if symbol == key.RIGHT:
+                    self.particles = self.reader.next()
 
-            if symbol == key.LEFT:
-                self.particles = self.reader.previous()
+                if symbol == key.UP or symbol == key.DOWN:
+                    self.particles = self.reader.random()
 
-            if symbol == key.RIGHT:
-                self.particles = self.reader.next()
+                self.reader.print_event()
 
-            if symbol == key.UP or symbol == key.DOWN:
-                self.particles = self.reader.random()
-
-            self.reader.print_event()
-
-            self.beam.start()
-            self.allow_update = True
+                self.beam.start()
+                self.allow_update = True

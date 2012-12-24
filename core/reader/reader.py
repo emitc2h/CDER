@@ -18,8 +18,10 @@ class Reader():
         self.file = TFile(file_path)
 
         ## Load the tree
-        self.tree = self.file.Get(tree_name)
-
+        self.full_tree = self.file.Get(tree_name)
+        self.tree      = self.full_tree
+        self.cut_tree  = self.full_tree
+        
         ## Tree navigation
         self.entries = self.tree.GetEntries()
         self.event = 0
@@ -104,6 +106,21 @@ class Reader():
         self.make_particles()
 
         return self.event_particles
+
+
+    def cut(self):
+
+        cut_string = raw_input('Enter cut (ROOT syntax) : ')
+        
+        self.cut_tree = self.full_tree.CopyTree(cut_string)
+        self.tree     = self.cut_tree
+
+        return 0
+
+        
+    def reset_cut(self):
+        self.tree     = self.full_tree
+        self.cut_tree = self.full_tree
 
         
     def get_jets(self):
