@@ -26,6 +26,7 @@ class Reader():
         ## Tree navigation
         self.entries = self.tree.GetEntries()
         self.event = 0
+        self.current_cut = 'No selection'
 
         ## Particles to display
         self.event_particles = []
@@ -114,16 +115,18 @@ class Reader():
         self.tree     = self.cut_tree
         try:
             self.entries = self.cut_tree.GetEntries()
-            print n
+            self.current_cut = cut_string
         except TypeError:
             self.tree = self.full_tree
             print 'Bad cut expression : "%s". Resetting the full tree' % cut_string
+            self.current_cut = 'No selection'
 
         
     def reset_cut(self):
         self.tree     = self.full_tree
         self.cut_tree = self.full_tree
         self.entries = self.full_tree.GetEntries()
+        self.current_cut = 'No selection'
 
         
     def get_jets(self):
@@ -283,4 +286,5 @@ class Reader():
             print '='*(max_word_length+21)
         
         print '\n'*(self.terminal_height)
+        print '\033[31mEvents :\033[0m %d   \033[31mselection :\033[0m %s' % (self.entries, self.current_cut)
 
