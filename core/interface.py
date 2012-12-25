@@ -46,10 +46,11 @@ class Interface():
 
         ## Text field
         self.text_field = pyglet.text.Label('',
-                                            font_size=14,
-                                            x=window_width*0.1,
+                                            font_name='Monaco',
+                                            font_size=10,
+                                            x=window_width*0.02,
                                             y=window_height*0.1,
-                                            color=(95, 135, 255, 255),
+                                            color=(73, 145, 255, 255),
                                             align='center')
         
         ## Show everything
@@ -92,8 +93,9 @@ class Interface():
         self.cut.scale = 0.4 * scale
 
         ## Reposition text field
+        self.text_field.x = window_width*0.02
         self.text_field.y = window_height*0.1
-        self.text_field.x = window_width*0.1
+
 
 
     def set_text(self, text):

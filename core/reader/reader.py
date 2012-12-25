@@ -108,14 +108,15 @@ class Reader():
         return self.event_particles
 
 
-    def cut(self):
-
-        cut_string = raw_input('Enter cut (ROOT syntax) : ')
-        
+    def cut(self, cut_string):
         self.cut_tree = self.full_tree.CopyTree(cut_string)
         self.tree     = self.cut_tree
-
-        return 0
+        try:
+            n = self.cut_tree.GetEntries()
+            print n
+        except TypeError:
+            self.tree = self.full_tree
+            print 'Bad cut expression : "%s". Resetting the full tree' % cut_string
 
         
     def reset_cut(self):

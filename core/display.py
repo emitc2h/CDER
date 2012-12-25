@@ -14,6 +14,7 @@ from reader.lhprocessor_reader import LHProcessor_Reader as selected_reader
 from config import filename, treename
 
 from core.interface import Interface
+from core.minitext  import MiniText
 
 ####################################################
 ## A class inheriting from the pyglet window      ##
@@ -51,13 +52,14 @@ class Display(pyglet.window.Window):
 
         ## Controllers
         self.allow_update = False
-        
+
+        ## Time control
         self.refresh_rate = 30
         self.wait = 0
 
+        ## Input text
         self.text_input_mode = False
-        self.negate_key      = False
-        self.input_string    = ''
+        self.text = MiniText(64)
         
         self.setup()
 
@@ -148,7 +150,12 @@ class Display(pyglet.window.Window):
             calo.update(dt)
 
         ## Update interface
+        if self.text_input_mode:
+            self.text.update(dt)
+            self.interface.set_text(self.text.full_output)
+            
         self.interface.update(dt)
+        
 
         self.draw()
             
@@ -263,8 +270,8 @@ class Display(pyglet.window.Window):
             if self.negate_key:
                 self.negate_key = False
             else:
-                self.input_string += text
-                self.interface.set_text(self.input_string)
+                self.text.insert(text)
+                self.interface.set_text(self.text.full_output)
         
 
     ## ---------------------------------------- ##
@@ -277,22 +284,44 @@ class Display(pyglet.window.Window):
             self.dispatch_event('on_close')
 
         if symbol == key.ENTER:
-            self.text_input_mode = False
-            if self.interface.cut.opacity > 0:
-                self.interface.set_text('')
-                self.interface.toggle_cut()
+            if self.text_input_mode:
+                self.text_input_mode = False
+                if self.interface.cut.opacity > 0:
+                    self.text.reset()
+                    self.interface.set_text('')
+                    self.interface.toggle_cut()
+                self.reader.cut(self.text.text_output)
 
         if self.text_input_mode:
             if symbol == key.BACKSPACE:
-                self.input_string = self.input_string[0:len(self.input_string)-1]
-                self.interface.set_text(self.input_string)
+                self.text.backspace()
+                self.interface.set_text(self.text.full_output)
 
-            if symbol == key.SPACE:
-                self.input_string += ' '
-                self.interface.set_text(self.input_string)
+            if symbol == key.DELETE:
+                self.text.delete()
+                self.interface.set_text(self.text.full_output)
 
-        if not self.text_input_mode:
+            if symbol == key.LEFT:
+                self.text.shift_left()
+                self.interface.set_text(self.text.full_output)
 
+            if symbol == key.RIGHT:
+                self.text.shift_right()
+                self.interface.set_text(self.text.full_output)
+
+            if symbol == key.A and modifiers & key.MOD_CTRL:
+                self.text.goto_begin()
+
+            if symbol == key.E and modifiers & key.MOD_CTRL:
+                self.text.goto_end()
+
+            if symbol == key.K and modifiers & key.MOD_CTRL:
+                self.text.kill()
+
+            if symbol == key.Y and modifiers & key.MOD_CTRL:
+                self.text.yank()
+
+        else:
             if symbol == key.C:
                 self.text_input_mode = True
                 self.negate_key = True
