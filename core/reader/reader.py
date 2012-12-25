@@ -63,46 +63,42 @@ class Reader():
 
     def next(self):
         
-        if self.event < self.entries:
-            
-            self.reset()
-            
+        if self.event < (self.entries-1):
             self.event += 1
-            self.tree.GetEntry(self.event)
+            
+        self.reset()
+            
+        self.tree.GetEntry(self.event)
 
-            ## Get new particle kinematics
-            self.get_particles()
-            self.make_particles()
+        ## Get new particle kinematics
+        self.get_particles()
+        self.make_particles()
 
-            return self.event_particles
-        else:
-            return []
+        return self.event_particles
         
 
             
     def previous(self):
         
-        if self.event > 1:
-
-            self.reset()
-            
+        if self.event > 0:
             self.event -= 1
-            self.tree.GetEntry(self.event)
 
-            ## Get new particle kinematics
-            self.get_particles()
-            self.make_particles()
+        self.reset()
+            
+        self.tree.GetEntry(self.event)
 
-            return self.event_particles
-        else:
-            return []
+        ## Get new particle kinematics
+        self.get_particles()
+        self.make_particles()
+
+        return self.event_particles
 
 
     def random(self):
 
         self.reset()
         
-        self.event = rand.randint(0, self.entries)
+        self.event = rand.randint(0, (self.entries-1))
         self.tree.GetEntry(self.event)
 
         ## Get new particle kinematics

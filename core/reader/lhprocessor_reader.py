@@ -1,5 +1,6 @@
+## Enable ROOT to read vectors
 from ROOT import gROOT
-gROOT.ProcessLine('.L addVectorToROOT.C+')
+gROOT.ProcessLine('.L core/reader/addVectorToROOT.C+')
 
 from reader import Reader
 

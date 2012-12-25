@@ -10,7 +10,7 @@ import math, random
 from particle.particle import Particle
 import utils
 
-from reader.lhprocessor_reader import LHProcessor_Reader as selected_reader
+from reader.example_reader import Example_Reader as selected_reader
 from reader.reader import CUT_NO_SELECTION
 from config import filename, treename
 

@@ -4,8 +4,8 @@ Input File
 ===========================================================
 """
 
-filename = 'LHProcessorCN.ttbar.root'
-treename = 'lh_test'
+filename = 'example.root'
+treename = 'events'
 
 
 """
