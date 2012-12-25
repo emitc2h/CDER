@@ -15,10 +15,11 @@ class Reader():
     def __init__(self, file_path, tree_name):
 
         ## Load the file
-        self.file = TFile(file_path)
+        self.chain = TChain(tree_name)
+        self.chain.Add(file_path)
 
         ## Load the tree
-        self.full_tree = self.file.Get(tree_name)
+        self.full_tree = self.chain
         self.tree      = self.full_tree
         self.cut_tree  = self.full_tree
         
