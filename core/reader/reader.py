@@ -1,4 +1,4 @@
-from ROOT import TTree, TFile
+from ROOT import TChain, TFile
 import random as rand
 import copy
 
@@ -113,7 +113,7 @@ class Reader():
         self.cut_tree = self.full_tree.CopyTree(cut_string)
         self.tree     = self.cut_tree
         try:
-            n = self.cut_tree.GetEntries()
+            self.entries = self.cut_tree.GetEntries()
             print n
         except TypeError:
             self.tree = self.full_tree
@@ -123,6 +123,7 @@ class Reader():
     def reset_cut(self):
         self.tree     = self.full_tree
         self.cut_tree = self.full_tree
+        self.entries = self.full_tree.GetEntries()
 
         
     def get_jets(self):
