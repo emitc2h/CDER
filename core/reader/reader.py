@@ -27,7 +27,7 @@ class Reader():
         self.entries = self.tree.GetEntries()
         self.event = 0
         self.current_cut = 'No selection'
-        self.previous_cuts = []
+        self.history = []
 
         ## Particles to display
         self.event_particles = []
@@ -118,13 +118,15 @@ class Reader():
             try:
                 self.entries = self.cut_tree.GetEntries()
                 self.current_cut = cut_string
-                self.previous_cuts.reverse()
-                self.previous_cuts.append(cut_string)
-                self.previous_cuts.reverse()
             except TypeError:
                 self.tree = self.full_tree
                 print 'Bad cut expression : "%s". Resetting the full tree' % cut_string
                 self.current_cut = 'No selection'
+
+            ## Store in history
+            self.history.reverse()
+            self.history.append(cut_string)
+            self.history.reverse()
 
         
     def reset_cut(self):

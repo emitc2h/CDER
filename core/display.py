@@ -311,11 +311,11 @@ class Display(pyglet.window.Window):
 
             if symbol == key.UP:
                 self.previous_cut +=1
-                n = len(self.reader.previous_cuts)
+                n = len(self.reader.history)
                 if self.previous_cut >= n:
                     self.previous_cut = n-1
                 else:
-                    self.text.set(self.reader.previous_cuts[self.previous_cut])
+                    self.text.set(self.reader.history[self.previous_cut])
                     self.interface.set_text(self.text.full_output)
 
             if symbol == key.DOWN:
@@ -324,7 +324,7 @@ class Display(pyglet.window.Window):
                     self.previous_cut = -1
                     self.text.set('')
                 else:
-                    self.text.set(self.reader.previous_cuts[self.previous_cut])
+                    self.text.set(self.reader.history[self.previous_cut])
                     self.interface.set_text(self.text.full_output)
                 
 
