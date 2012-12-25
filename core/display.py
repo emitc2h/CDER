@@ -329,7 +329,9 @@ class Display(pyglet.window.Window):
                 self.interface.toggle_cut()
 
             if symbol == key.R:
-                self.reader.reset_cut()
+                if self.reader.current_cut != '':
+                    self.reader.reset_cut()
+                    self.interface.reset_cut()
 
             if symbol == key.A:
                 self.mouse_y_rotation = 0.0

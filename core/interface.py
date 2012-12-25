@@ -44,6 +44,16 @@ class Interface():
                                          x=window_width/2,
                                          y=window_height*0.16)
 
+        self.image_cut_reset = pyglet.resource.image('core/images/cut_reset.png')
+        self.image_cut_reset.anchor_x = self.image_cut.width/2
+        self.image_cut_reset.anchor_y = self.image_cut.height/2
+
+        self.cut_reset_disappear = False
+
+        self.cut_reset = pyglet.sprite.Sprite(self.image_cut_reset,
+                                              x=window_width/2,
+                                              y=window_height*0.16)
+
         ## Text field
         self.text_field = pyglet.text.Label('',
                                             font_name='Monaco',
@@ -60,6 +70,7 @@ class Interface():
         ## Hide help and cut message at the beginning
         self.help.opacity = 0
         self.cut.opacity = 0
+        self.cut_reset.opacity = 0
 
 
     def resize(self, window_width, window_height):
@@ -88,9 +99,12 @@ class Interface():
         self.help_pointer.scale = 0.4 * scale
 
 
-        ## Cut message
+        ## Cut messages
         self.cut.y = window_height*0.16
         self.cut.scale = 0.4 * scale
+
+        self.cut_reset.y = window_height*0.16
+        self.cut_reset.scale = 0.4 * scale
 
         ## Reposition text field
         self.text_field.x = window_width*0.02
@@ -126,6 +140,12 @@ class Interface():
         if self.cut.opacity < 0:
             self.cut.opacity = 0
             self.cut_disappear = False
+
+        if self.cut_reset_disappear:
+            self.cut_reset.opacity -= 10
+        if self.cut_reset.opacity < 0:
+            self.cut_reset.opacity = 0
+            self.cut_reset_disappear = False
         
         
     def draw(self):
@@ -137,6 +157,9 @@ class Interface():
 
         if self.cut.opacity > 0:
             self.cut.draw()
+
+        if self.cut_reset.opacity > 0:
+            self.cut_reset.draw()
 
         self.text_field.draw()
 
@@ -175,5 +198,10 @@ class Interface():
         if action == 1:
             self.cut_appear    = False
             self.cut_disappear = True
+
+
+    def reset_cut(self):
+        self.cut_reset.opacity = 255
+        self.cut_reset_disappear = True
         
 
