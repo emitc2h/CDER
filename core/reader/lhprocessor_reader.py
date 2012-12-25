@@ -46,7 +46,7 @@ class LHProcessor_Reader(Reader):
         self.extra_information['MET phi centrality'] = (self.tree.met_phi_centrality, '.3f')
 
         ## Resonance Pt
-        self.extra_information['tau-lep resonance Pt'] = (self.tree.resonance_pt_tau_lep/1000.0, '.3f')
+        self.extra_information['tau-lep resonance Pt'] = (self.tree.resonance_pt_tau_lep, '.3f')
 
         ## dR
         self.extra_information['tau-lep dR'] = (self.tree.dr_tau_lep, '.3f')

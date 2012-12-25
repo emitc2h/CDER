@@ -9,6 +9,7 @@ from ..particle.muon import Muon
 from ..particle.photon import Photon
 from ..particle.met import MET
 
+CUT_NO_SELECTION = 'No selection'
 
 class Reader():
 
@@ -26,7 +27,7 @@ class Reader():
         ## Tree navigation
         self.entries = self.tree.GetEntries()
         self.event = 0
-        self.current_cut = 'No selection'
+        self.current_cut = CUT_NO_SELECTION
         self.history = []
 
         ## Particles to display
@@ -121,7 +122,7 @@ class Reader():
             except TypeError:
                 self.tree = self.full_tree
                 print 'Bad cut expression : "%s". Resetting the full tree' % cut_string
-                self.current_cut = 'No selection'
+                self.current_cut = CUT_NO_SELECTION
 
             ## Store in history
             self.history.reverse()
@@ -133,7 +134,7 @@ class Reader():
         self.tree     = self.full_tree
         self.cut_tree = self.full_tree
         self.entries = self.full_tree.GetEntries()
-        self.current_cut = 'No selection'
+        self.current_cut = CUT_NO_SELECTION
 
         
     def get_jets(self):

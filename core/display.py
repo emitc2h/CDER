@@ -11,6 +11,7 @@ from particle.particle import Particle
 import utils
 
 from reader.lhprocessor_reader import LHProcessor_Reader as selected_reader
+from reader.reader import CUT_NO_SELECTION
 from config import filename, treename
 
 from core.interface import Interface
@@ -29,9 +30,10 @@ class Display(pyglet.window.Window):
         """
         Constructor
         """
+
         config = Config(sample_buffers=1, samples=4, depth_size=16, double_buffer=True)
         super(Display, self).__init__(resizable=True, config=config)
-
+        
         self.mouse_y_rotation = -57.0
         self.mouse_z_rotation = -20.0
         self.mouse_zoom = 15.0
@@ -39,6 +41,7 @@ class Display(pyglet.window.Window):
         ## Window size
         self.width=800
         self.height=600
+
 
         self.calorimeters = calorimeters
         self.particles = particles
@@ -59,7 +62,7 @@ class Display(pyglet.window.Window):
 
         ## Input text
         self.text_input_mode = False
-        self.text = MiniText(64)
+        self.text = MiniText(70)
         
         self.setup()
 
@@ -349,7 +352,7 @@ class Display(pyglet.window.Window):
                 self.previous_cut = -1
 
             if symbol == key.R:
-                if self.reader.current_cut != '':
+                if self.reader.current_cut != CUT_NO_SELECTION:
                     self.reader.reset_cut()
                     self.interface.reset_cut()
 

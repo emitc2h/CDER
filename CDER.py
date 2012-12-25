@@ -34,6 +34,5 @@ def on_draw():
 ####################################################
 ## Run pyglet:
 if __name__ == '__main__':
-    display.set_visible(True)
     pyglet.app.run()
 
