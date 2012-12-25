@@ -309,6 +309,25 @@ class Display(pyglet.window.Window):
                 self.text.shift_right()
                 self.interface.set_text(self.text.full_output)
 
+            if symbol == key.UP:
+                self.previous_cut +=1
+                n = len(self.reader.previous_cuts)
+                if self.previous_cut >= n:
+                    self.previous_cut = n-1
+                else:
+                    self.text.set(self.reader.previous_cuts[self.previous_cut])
+                    self.interface.set_text(self.text.full_output)
+
+            if symbol == key.DOWN:
+                self.previous_cut -=1
+                if self.previous_cut < 0:
+                    self.previous_cut = -1
+                    self.text.set('')
+                else:
+                    self.text.set(self.reader.previous_cuts[self.previous_cut])
+                    self.interface.set_text(self.text.full_output)
+                
+
             if symbol == key.A and modifiers & key.MOD_CTRL:
                 self.text.goto_begin()
 
@@ -327,6 +346,7 @@ class Display(pyglet.window.Window):
                 self.negate_key = True
                 self.input_string    = ''
                 self.interface.toggle_cut()
+                self.previous_cut = -1
 
             if symbol == key.R:
                 if self.reader.current_cut != '':

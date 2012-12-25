@@ -60,6 +60,12 @@ class MiniText():
             self.sep_time = 0.0
 
         self.update_all()
+
+
+    def set(self, text):
+        self.segment_1 = text
+        self.segment_2 = ''
+        self.update_all()
             
         
     def insert(self, character):
