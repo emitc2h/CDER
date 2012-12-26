@@ -169,7 +169,7 @@ class Display(pyglet.window.Window):
                 ## Display cut message
                 self.interface.toggle_cut()
                 ## Cut history navigator
-                self.previous_cut = -1
+                self.history_index = -1
 
             ## Reset the cut, go back to full ROOT tree 
             if symbol == key.R:
@@ -255,22 +255,25 @@ class Display(pyglet.window.Window):
 
             ## Move back one step in history
             if symbol == key.UP:
-                self.previous_cut +=1
+                if self.history_index == -1:
+                    self.current_input = self.text_editor.text_output
+                self.history_index +=1
                 n = len(self.reader.history)
-                if self.previous_cut >= n:
-                    self.previous_cut = n-1
+                if self.history_index >= n:
+                    self.history_index = n-1
                 else:
-                    self.text_editor.set(self.reader.history[self.previous_cut])
+                    self.text_editor.set(self.reader.history[self.history_index])
                     self.interface.set_text(self.text_editor.full_output)
 
             ## Move forward one step in history
             if symbol == key.DOWN:
-                self.previous_cut -=1
-                if self.previous_cut < 0:
-                    self.previous_cut = -1
-                    self.text_editor.set('')
+                self.history_index -=1
+                
+                if self.history_index < 0:
+                    self.history_index = -1
+                    self.text_editor.set(self.current_input)
                 else:
-                    self.text_editor.set(self.reader.history[self.previous_cut])
+                    self.text_editor.set(self.reader.history[self.history_index])
                     self.interface.set_text(self.text_editor.full_output)
                 
 
