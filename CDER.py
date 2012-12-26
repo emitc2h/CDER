@@ -5,8 +5,8 @@ from core import config
 ## Instantiate objects
 from core.calorimeter import em, had
 calorimeters = []
-if config.display_em  : calorimeters.append(em.EM_Calorimeter())
-if config.display_had : calorimeters.append(had.HAD_Calorimeter())
+if config.em_display  : calorimeters.append(em.EM_Calorimeter())
+if config.had_display : calorimeters.append(had.HAD_Calorimeter())
     
 particles = []
 

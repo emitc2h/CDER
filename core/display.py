@@ -10,9 +10,10 @@ import math, random
 from particle.particle import Particle
 import utils
 
-from reader.example_reader import Example_Reader as selected_reader
 from reader.reader import CUT_NO_SELECTION
-from config import filename, treename
+from config import filename, treename, filereader
+import importlib
+reader_module = importlib.import_module('core.reader.%s' % filereader)
 
 from core.interface import Interface
 from core.minitext  import MiniText
@@ -48,7 +49,7 @@ class Display(pyglet.window.Window):
         self.beam = beam
 
         ## Particle reader
-        self.reader = selected_reader(filename, treename)
+        self.reader = reader_module.Custom_Reader(filename, treename)
 
         ## Interface
         self.interface = Interface(self.width, self.height)

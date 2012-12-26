@@ -4,7 +4,7 @@ gROOT.ProcessLine('.L core/reader/addVectorToROOT.C+')
 
 ## Define accessors
 from reader import Reader
-class Example_Reader(Reader):
+class Custom_Reader(Reader):
 
     def __init__(self, file_path, tree_name):
         Reader.__init__(self, file_path, tree_name)
