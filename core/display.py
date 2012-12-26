@@ -1,28 +1,37 @@
+#**************************************************#
+# file   : display.py                              #
+# author : Michel Trottier-McDonald                #
+# date   : December 2012                           #
+# description:                                     #
+# Handles the window, keyboard and mouse input,    #
+# drawing of objects and openGL setup              #
+#**************************************************#
+
+## Pyglet imports
 import pyglet
 from pyglet.gl import *
 from pyglet.window import key
 from pyglet.window import mouse
+
+## Lepton imports
 from lepton import default_system as lepton_system
 from lepton.controller import Lifetime, Movement, Fader
 
-import math, random
+## Basic python imports
+import math, random, importlib
 
-from particle.particle import Particle
-import utils
-
-from reader.reader import CUT_NO_SELECTION
-from config import filename, treename, filereader
-import importlib
-reader_module = importlib.import_module('core.reader.%s' % filereader)
-
+## CDER imports
 from core.interface import Interface
 from core.minitext  import MiniText
+from particle.particle import Particle
+import utils
+from reader.reader import CUT_NO_SELECTION
 
-####################################################
-## A class inheriting from the pyglet window      ##
-## to display the openGL objects                  ##
-## Author : Michel Trottier-McDonald              ##
-## Date   : December 2012                         ##
+## imports to load file with appropriate reader
+from config import filename, treename, filereader
+reader_module = importlib.import_module('core.reader.%s' % filereader)
+
+
 ####################################################
 class Display(pyglet.window.Window):
 
@@ -32,6 +41,7 @@ class Display(pyglet.window.Window):
         Constructor
         """
 
+        ## Configure the parent class
         config = Config(sample_buffers=1, samples=4, depth_size=16, double_buffer=True)
         super(Display, self).__init__(resizable=True, config=config)
         
