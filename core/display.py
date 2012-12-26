@@ -27,7 +27,7 @@ from core.minitext  import MiniText
 class Display(pyglet.window.Window):
 
     ## --------------------------------------- ##
-    def __init__(self, calorimeters, beam, particles):
+    def __init__(self, calorimeters, beam):
         """
         Constructor
         """
@@ -45,7 +45,7 @@ class Display(pyglet.window.Window):
 
 
         self.calorimeters = calorimeters
-        self.particles = particles
+        self.particles = []
         self.beam = beam
 
         ## Particle reader
