@@ -26,7 +26,7 @@ class Reader():
         
         ## Tree navigation
         self.entries = self.tree.GetEntries()
-        self.event = 0
+        self.event = -1
         self.current_cut = CUT_NO_SELECTION
         self.history = []
 
@@ -82,6 +82,9 @@ class Reader():
         
         if self.event > 0:
             self.event -= 1
+
+        if self.event < 0:
+            self.event = 0
 
         self.reset()
             

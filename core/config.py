@@ -54,3 +54,20 @@ beam_speed       = conf.getfloat('Graphics', 'beam_speed')
 particle_speed   = conf.getfloat('Graphics', 'particle_speed')
 particle_filling = conf.getint('Graphics', 'particle_filling')
 
+
+"""
+===========================================================
+Camera control
+===========================================================
+"""
+
+## Pitch and yaw control
+yaw_speed   = conf.getfloat('Camera', 'yaw_speed')
+pitch_speed = conf.getfloat('Camera', 'pitch_speed')
+min_pitch   = conf.getfloat('Camera', 'min_pitch')
+max_pitch   = conf.getfloat('Camera', 'max_pitch')
+
+## Zoom control
+zoom_speed  = conf.getfloat('Camera', 'zoom_speed')
+min_zoom    = conf.getfloat('Camera', 'min_zoom')
+max_zoom    = conf.getfloat('Camera', 'max_zoom')

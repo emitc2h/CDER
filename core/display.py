@@ -24,12 +24,11 @@ import math, random, importlib
 from core.interface import Interface
 from core.minitext  import MiniText
 from particle.particle import Particle
-import utils
+import utils, config
 from reader.reader import CUT_NO_SELECTION
 
 ## imports to load file with appropriate reader
-from config import filename, treename, filereader
-reader_module = importlib.import_module('core.reader.%s' % filereader)
+reader_module = importlib.import_module('core.reader.%s' % config.filereader)
 
 
 ####################################################
@@ -42,121 +41,371 @@ class Display(pyglet.window.Window):
         """
 
         ## Configure the parent class
-        config = Config(sample_buffers=1, samples=4, depth_size=16, double_buffer=True)
-        super(Display, self).__init__(resizable=True, config=config)
-        
-        self.mouse_y_rotation = -57.0
-        self.mouse_z_rotation = -20.0
-        self.mouse_zoom = 15.0
+        window_config = Config(sample_buffers=1, samples=4, depth_size=16, double_buffer=True)
+        super(Display, self).__init__(resizable=True,
+                                      config=window_config)
+
+        ## Initial point of view
+        self.yaw = -57.0
+        self.pitch = -20.0
+        self.zoom = 15.0
 
         ## Window size
         self.width=800
         self.height=600
 
-
+        ## 3D objects
         self.calorimeters = calorimeters
         self.particles = []
         self.beam = beam
 
-        ## Particle reader
-        self.reader = reader_module.Custom_Reader(filename, treename)
-
-        ## Interface
+        ## 2D objects
         self.interface = Interface(self.width, self.height)
+        
+        ## input ROOT file management
+        self.reader = reader_module.Custom_Reader(config.filename,
+                                                  config.treename)
 
-        ## Controllers
-        self.allow_update = False
+        ## Control when to allow modification of calorimeter openGL primitives
+        self.allow_calo_update = False
 
         ## Time control
         self.refresh_rate = 30
-        self.wait = 0
 
-        ## Input text
+        ## Mini text editor for cuts
         self.text_input_mode = False
-        self.text = MiniText(70)
-        
-        self.setup()
+        self.text_editor = MiniText(70)
 
-
-    ## ---------------------------------------- ##
-    def setup(self):
-        """
-        Setup the window size, and OpenGL drawing area
-        """
-        
+        ## pyglet time control
         pyglet.clock.schedule_interval(self.update, 1.0/self.refresh_rate)
 
-        ## Control particles from the default system
+        ## Specify default behaviour of lepton particles
         lepton_system.add_global_controller(
             Movement(min_velocity=0.0),
             Lifetime(1.0),
             Fader(max_alpha=0.7, fade_out_start=0.05, fade_out_end=0.2),
             )
+    
 
 
     ## ---------------------------------------- ##
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
+        """
+        Mouse control 1: click and drag to rotate around the scene
+        """
+
+        ## Click
         if buttons == mouse.LEFT:
-            self.mouse_y_rotation += dx * 0.5
-            self.mouse_z_rotation += dy * 0.5
 
-            if self.mouse_z_rotation > 85.0:
-                self.mouse_z_rotation = 85.0
+            ## translate mouse movement into rotation of point of view
+            self.yaw += dx * config.yaw_speed
+            self.pitch += dy * config.pitch_speed
 
-            if self.mouse_z_rotation < -85.0:
-                self.mouse_z_rotation = -85.0
+            ## Do not allow periodicity on pitch
+            if self.pitch > config.max_pitch:
+                self.pitch = config.max_pitch
 
-            if self.mouse_y_rotation > 180.0:
-                self.mouse_y_rotation = self.mouse_y_rotation - 360.0
+            if self.pitch < config.min_pitch:
+                self.pitch = config.min_pitch
 
-            if self.mouse_y_rotation < -180.0:
-                self.mouse_y_rotation = self.mouse_y_rotation + 360.0
+            ## Do not allow yaw to grow arbitrarily large
+            if self.yaw > 180.0:
+                self.yaw = self.yaw - 360.0
 
+            if self.yaw < -180.0:
+                self.yaw = self.yaw + 360.0
+
+                
 
     # ---------------------------------------- ##
     def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
+        """
+        Mouse control 2: scroll up and down to zoom in and out
+        """
 
-        self.mouse_zoom += 0.1*scroll_y
-        
-        if self.mouse_zoom < 1.3:
-            self.mouse_zoom = 1.3
-        if self.mouse_zoom > 25.0:
-            self.mouse_zoom = 25.0
+        ## Translate mouse scroll into zoom
+        self.zoom += scroll_y * config.zoom_speed
 
-        
+        ## Only allow zoom in specified range
+        if self.zoom < config.max_zoom:
+            self.zoom = config.max_zoom
+        if self.zoom > config.min_zoom:
+            self.zoom = config.min_zoom
+
+
+
     ## ---------------------------------------- ##
-    def on_draw(self):
+    def on_text(self, text):
         """
-        Overrides the handler to draw the pyglet window
+        Keyboard control 1: typing in the text editor
         """
-        ## When the window is drawn, draw the OpenGL content
-        self.draw()
+
+        ## Must be in text input mode, otherwise keys for control
+        if self.text_input_mode:
+            ## Prevent 'c' (used to trigger text input mode) to be included in text editor
+            if self.negate_key:
+                self.negate_key = False
+            else:
+                ## Collect character into text editor and pass formatted output to
+                ## 2D inteface
+                self.text_editor.insert(text)
+                self.interface.set_text(self.text_editor.full_output)
+
+
+
+    ## ---------------------------------------- ##
+    def on_key_press(self, symbol, modifiers):
+        """
+        Keyboard control 2: main controls
+        """
+
+        ## Main controls
+        if not self.text_input_mode:
+
+            ## Turn on text input mode, enter cut
+            if symbol == key.C:
+                self.text_input_mode = True
+                self.negate_key = True
+                ## Display cut message
+                self.interface.toggle_cut()
+                ## Cut history navigator
+                self.previous_cut = -1
+
+            ## Reset the cut, go back to full ROOT tree 
+            if symbol == key.R:
+                if self.reader.current_cut != CUT_NO_SELECTION:
+                    self.reader.reset_cut()
+                    self.interface.reset_cut()
+
+            ## Transverse view
+            if symbol == key.A:
+                self.yaw = 0.0
+                self.pitch = 0.0
+                self.zoom = 15.0
+
+            ## Longitudinal view
+            if symbol == key.S:
+                self.yaw = -90.0
+                self.pitch = 0.0
+                self.zoom = 15.0
+
+            ## Toggle help screen
+            if symbol == key.H:
+                self.interface.toggle_help()
+
+            ## Event navigation
+            if symbol == key.LEFT or symbol == key.RIGHT or symbol == key.UP or symbol == key.DOWN:
+
+                ## Prepare for new event, remove particles from old event
+                for particle in self.particles:
+                    particle.hide()
+                    lepton_system.remove_group(particle.group)
+                    lepton_system.remove_group(particle.sparks)
+
+                self.particles = []
+
+                ## Remove calorimeter energy
+                for calo in self.calorimeters:
+                    calo.reset()
+
+                ## Load particles from previous event
+                if symbol == key.LEFT:
+                    self.particles = self.reader.previous()
+
+                ## Load particles from next event
+                if symbol == key.RIGHT:
+                    self.particles = self.reader.next()
+
+                ## Load particles from a random event
+                if symbol == key.UP or symbol == key.DOWN:
+                    self.particles = self.reader.random()
+
+                ## Print out event information to terminal
+                self.reader.print_event()
+
+                ## Beam collision animation
+                self.beam.start()
+
+                ## Allow modification of calorimeter openGL primitives
+                self.allow_calo_update = True
+
+
+        ## Text editor controls
+        if self.text_input_mode:
+
+            ## Backspace expected behaviour
+            if symbol == key.BACKSPACE:
+                self.text_editor.backspace()
+                self.interface.set_text(self.text_editor.full_output)
+
+            ## Delete expected behaviour
+            if symbol == key.DELETE:
+                self.text_editor.delete()
+                self.interface.set_text(self.text_editor.full_output)
+
+            ## Move cursor left
+            if symbol == key.LEFT:
+                self.text_editor.cursor_left()
+                self.interface.set_text(self.text_editor.full_output)
+
+            ## Move cursor right
+            if symbol == key.RIGHT:
+                self.text_editor.cursor_right()
+                self.interface.set_text(self.text_editor.full_output)
+
+            ## Move back one step in history
+            if symbol == key.UP:
+                self.previous_cut +=1
+                n = len(self.reader.history)
+                if self.previous_cut >= n:
+                    self.previous_cut = n-1
+                else:
+                    self.text_editor.set(self.reader.history[self.previous_cut])
+                    self.interface.set_text(self.text_editor.full_output)
+
+            ## Move forward one step in history
+            if symbol == key.DOWN:
+                self.previous_cut -=1
+                if self.previous_cut < 0:
+                    self.previous_cut = -1
+                    self.text_editor.set('')
+                else:
+                    self.text_editor.set(self.reader.history[self.previous_cut])
+                    self.interface.set_text(self.text_editor.full_output)
+                
+
+            ## Move cursor to beginning of text
+            if symbol == key.A and modifiers & key.MOD_CTRL:
+                self.text_editor.goto_begin()
+
+            ## Move cursor to end of text
+            if symbol == key.E and modifiers & key.MOD_CTRL:
+                self.text_editor.goto_end()
+
+            ## Kill the text following te cursor
+            if symbol == key.K and modifiers & key.MOD_CTRL:
+                self.text_editor.kill()
+
+            ## Yank the text back at the cursor position
+            if symbol == key.Y and modifiers & key.MOD_CTRL:
+                self.text_editor.yank()
+
+        ## Terminate text input mode and pass cut string to ROOT file reader
+        if symbol == key.ENTER:
+            ## Terminate text input mode
+            if self.text_input_mode:
+                self.text_input_mode = False
+                ## Empty text editor and interface text, make cut message disappear
+                if self.interface.cut.opacity > 0:
+                    self.text_editor.reset()
+                    self.interface.set_text('')
+                    self.interface.toggle_cut()
+                ## Pass cut string to ROOT file reader
+                self.reader.cut(self.text_editor.text_output)
+
+        ## Quit CDER
+        if symbol == key.ESCAPE:
+            self.dispatch_event('on_close')
+
+
+
+    ## ---------------------------------------- ##
+    def on_resize(self,width, height):
+        """
+        Behaviour of displayed objects when resizing the window
+        """
+
+        ## Avoid displaying artefacts in memory
+        self.clear()
+        
+        ## Protect against vanishing window
+        if height == 0:
+            height=1
+
+        ## Adjust openGL 3D perspective
+        glViewport(0, 0, width, height)
+        glMatrixMode(GL_PROJECTION)
+        glLoadIdentity()
+        gluPerspective(45.0, float(width) / float(height), 0.1, 100.0)
+        glMatrixMode(GL_MODELVIEW)
+
+        ## Adjust positioning and size of 2D objects
+        self.interface.resize(width, height)
+
+
+
+    ## ---------------------------------------- ##
+    def mode_3D(self):
+        """
+        Set openGL to draw objects in the 3D scene
+        """
+
+        ## Rendering options
+        glDisable(GL_DEPTH_TEST)
+        glEnable(GL_BLEND)
+        glShadeModel(GL_SMOOTH)
+        glBlendFunc(GL_SRC_ALPHA,GL_ONE)
+        glHint(GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST);
+
+        ## Perspective definition
+        glMatrixMode(GL_PROJECTION)
+        glLoadIdentity()
+        gluPerspective(45.0, float(self.width) / float(self.height), 0.1, 100.0)
+        glMatrixMode(GL_MODELVIEW)
+        glLoadIdentity()
+
+
+
+    ## ---------------------------------------- ##
+    def mode_2D(self):
+        """
+        Set openGL to draw objects in the 2D scene in front of the 3D scene
+        """
+
+        ## Rendering options
+        glDisable(GL_DEPTH_TEST) 
+
+        ## Perspective options
+        glMatrixMode(GL_PROJECTION)
+        glLoadIdentity()
+        gluOrtho2D(0, self.width, 0, self.height)
+        glMatrixMode(GL_MODELVIEW)
+        glLoadIdentity()
+        
 
 
     ## ---------------------------------------- ##
     def update(self, dt):
+        """
+        Update the displayed 3D and 2D scenes
+        """
 
-        ## Update beam
-        self.beam.update(dt)
-            
+        ## Update beam positions (only during beam animation)
+        if self.beam.incoming:
+            self.beam.update(dt)
+
+        ## Determine what to display after beam collision
         if not self.beam.incoming:
-            if self.allow_update:
+            ## Light up calorimeter cells when displayed particles hit
+            if self.allow_calo_update:
                 all_hit = True
                 for particle in self.particles:
                     particle.show()
                     if not particle.calo_hit_EM and not particle.calo_hit_HAD:
                         all_hit = False
+                ## As long as not all particles hit the calorimeter, keep
+                ## recompiling openGL primitives (CPU intensive)
                 if not all_hit:
                     for calo in self.calorimeters:
                         calo.energize(self.particles)
                 else:
-                    self.allow_update = False
+                    self.allow_calo_update = False
 
         ## Update particles
         for particle in self.particles:
             particle.update(dt)
 
-        ## Update particle systems
+        ## Update lepton system
         lepton_system.update(dt) 
                 
         ## Update calorimeters
@@ -165,244 +414,63 @@ class Display(pyglet.window.Window):
 
         ## Update interface
         if self.text_input_mode:
-            self.text.update(dt)
-            self.interface.set_text(self.text.full_output)
-            
+            self.text_editor.update(dt)
+            self.interface.set_text(self.text_editor.full_output)
         self.interface.update(dt)
-        
 
+        ## Redraw the scene
         self.draw()
-            
-
-    ## ---------------------------------------- ##
-    def on_resize(self,width, height):
-        """
-        Overrides the handler to resize the pyglet window (resize OpenGL instead)
-        """
-        ## When the window is resized, resize the OpenGL content
-        self.resize(width, height)
-
-
-    ## ---------------------------------------- ##
-    def resize(self, width, height):
-        """
-        Controls the resizing of the OpenGL display area
-        """
-
-        ## Protect against vanishing window
-        if height == 0:
-            height=1
-
-        glViewport(0, 0, width, height)
-        glMatrixMode(GL_PROJECTION)
-        glLoadIdentity()
-        gluPerspective(45.0, float(width) / float(height), 0.1, 100.0)
-        glMatrixMode(GL_MODELVIEW)
-
-        self.interface.resize(width, height)
-
-
-
-    ## ---------------------------------------- ##
-    def mode_3D(self):
-        
-        glEnable(GL_BLEND)
-        glShadeModel(GL_SMOOTH)
-        glBlendFunc(GL_SRC_ALPHA,GL_ONE)
-        glHint(GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST);
-        glDisable(GL_DEPTH_TEST)
-
-        glMatrixMode(GL_PROJECTION)
-        glLoadIdentity()
-        gluPerspective(45.0, float(self.width) / float(self.height), 0.1, 100.0)
-        glMatrixMode(GL_MODELVIEW)
-        glLoadIdentity()
-
-
-    ## ---------------------------------------- ##
-    def mode_2D(self):
-        glDisable(GL_DEPTH_TEST) 
-        glMatrixMode(GL_PROJECTION)
-        glLoadIdentity()
-        gluOrtho2D(0, self.width, 0, self.height)
-        glMatrixMode(GL_MODELVIEW)
-        glLoadIdentity()
     
         
         
     ## ---------------------------------------- ##
     def draw(self):
         """
-        The main drawing function (determines what to draw)
+        Draw the 3D and 2D scenes
         """
 
+        ## Clear openGL buffers
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glLoadIdentity()
 
+        ## Draw the 3D scene first
         self.mode_3D()
         
-        ## Position camera
-        gluLookAt( 0.0,  0.0, -self.mouse_zoom,
+        ## Point of view
+        gluLookAt( 0.0,  0.0, -self.zoom,
                    0.0,  0.0,  0.0,
                    0.0,  1.0,  0.0 )
 
-        glRotatef(self.mouse_y_rotation, 0.0, 1.0, 0.0)
+        ## Rotate the scene to emulate yaw
+        glRotatef(self.yaw, 0.0, 1.0, 0.0)
 
-        phi_camera = self.mouse_y_rotation*math.pi / 180.0
-        theta_camera = self.mouse_z_rotation*math.pi / 180.0
-        
-        glRotatef(self.mouse_z_rotation, math.cos(phi_camera), 0.0, math.sin(phi_camera))
+        ## Determine the pitch axis
+        phi_camera = self.yaw*math.pi / 180.0
+        theta_camera = self.pitch*math.pi / 180.0
+
+        ## Rotate the scene to emulate pitch
+        glRotatef(self.pitch, math.cos(phi_camera), 0.0, math.sin(phi_camera))
 
         ## Draw lepton particles
         lepton_system.draw()
 
-        ## Figure out the z angle in the calorimeter cylindrical coordinate system
+        ## Determine camera position w.r.t. calorimeter coordinate system
+        ## This allow ordering of cell drawing in case of disabled depth test
         theta_camera += math.pi/2
-        
         theta_calo, phi_calo = utils.sphy_to_sphz(theta_camera, phi_camera) 
-
         if phi_camera > 0:
             theta_camera = -theta_camera
         
         ## Draw calorimeters
         for calo in self.calorimeters:
             calo.theta_camera = theta_calo
-            calo.r_camera = self.mouse_zoom
+            calo.r_camera = self.zoom
             calo.phi_camera = theta_camera - math.pi/2
             calo.draw()
 
-        ## Display logo
+        ## Draw the 2D scene, delegate to interface
         self.mode_2D()
         self.interface.draw()
 
+        ## Switch back to 3D scene to allow for manipulation
         self.mode_3D()
-        
-
-    ## ---------------------------------------- ##
-    def on_text(self, text):
-        if self.text_input_mode:
-            if self.negate_key:
-                self.negate_key = False
-            else:
-                self.text.insert(text)
-                self.interface.set_text(self.text.full_output)
-        
-
-    ## ---------------------------------------- ##
-    def on_key_press(self, symbol, modifiers):
-        """
-        Make sure everything disappears correctly
-        """
-
-        if symbol == key.ESCAPE:
-            self.dispatch_event('on_close')
-
-        if symbol == key.ENTER:
-            if self.text_input_mode:
-                self.text_input_mode = False
-                if self.interface.cut.opacity > 0:
-                    self.text.reset()
-                    self.interface.set_text('')
-                    self.interface.toggle_cut()
-                self.reader.cut(self.text.text_output)
-
-        if self.text_input_mode:
-            if symbol == key.BACKSPACE:
-                self.text.backspace()
-                self.interface.set_text(self.text.full_output)
-
-            if symbol == key.DELETE:
-                self.text.delete()
-                self.interface.set_text(self.text.full_output)
-
-            if symbol == key.LEFT:
-                self.text.shift_left()
-                self.interface.set_text(self.text.full_output)
-
-            if symbol == key.RIGHT:
-                self.text.shift_right()
-                self.interface.set_text(self.text.full_output)
-
-            if symbol == key.UP:
-                self.previous_cut +=1
-                n = len(self.reader.history)
-                if self.previous_cut >= n:
-                    self.previous_cut = n-1
-                else:
-                    self.text.set(self.reader.history[self.previous_cut])
-                    self.interface.set_text(self.text.full_output)
-
-            if symbol == key.DOWN:
-                self.previous_cut -=1
-                if self.previous_cut < 0:
-                    self.previous_cut = -1
-                    self.text.set('')
-                else:
-                    self.text.set(self.reader.history[self.previous_cut])
-                    self.interface.set_text(self.text.full_output)
-                
-
-            if symbol == key.A and modifiers & key.MOD_CTRL:
-                self.text.goto_begin()
-
-            if symbol == key.E and modifiers & key.MOD_CTRL:
-                self.text.goto_end()
-
-            if symbol == key.K and modifiers & key.MOD_CTRL:
-                self.text.kill()
-
-            if symbol == key.Y and modifiers & key.MOD_CTRL:
-                self.text.yank()
-
-        else:
-            if symbol == key.C:
-                self.text_input_mode = True
-                self.negate_key = True
-                self.input_string    = ''
-                self.interface.toggle_cut()
-                self.previous_cut = -1
-
-            if symbol == key.R:
-                if self.reader.current_cut != CUT_NO_SELECTION:
-                    self.reader.reset_cut()
-                    self.interface.reset_cut()
-
-            if symbol == key.A:
-                self.mouse_y_rotation = 0.0
-                self.mouse_z_rotation = 0.0
-                self.mouse_zoom = 15.0
-
-            if symbol == key.S:
-                self.mouse_y_rotation = -90.0
-                self.mouse_z_rotation = 0.0
-                self.mouse_zoom = 15.0
-
-            if symbol == key.H:
-                self.interface.toggle_help()
-
-            if symbol == key.LEFT or symbol == key.RIGHT or symbol == key.UP or symbol == key.DOWN:
-
-                ## Remove existing particles
-                for particle in self.particles:
-                    particle.hide()
-                    lepton_system.remove_group(particle.group)
-                    lepton_system.remove_group(particle.sparks)
-            
-                for calo in self.calorimeters:
-                    calo.reset()
-
-                self.particles = []
-
-                if symbol == key.LEFT:
-                    self.particles = self.reader.previous()
-
-                if symbol == key.RIGHT:
-                    self.particles = self.reader.next()
-
-                if symbol == key.UP or symbol == key.DOWN:
-                    self.particles = self.reader.random()
-
-                self.reader.print_event()
-
-                self.beam.start()
-                self.allow_update = True

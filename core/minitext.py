@@ -103,7 +103,7 @@ class MiniText():
             self.update_all()
         
         
-    def shift_left(self):
+    def cursor_left(self):
         if not len(self.segment_1) == 0:
             character, new_segment = pop_end(self.segment_1)
             self.segment_2 = character + self.segment_2
@@ -111,7 +111,7 @@ class MiniText():
             self.update_all()
 
         
-    def shift_right(self):
+    def cursor_right(self):
         if not len(self.segment_2) == 0:
             character, new_segment = pop_begin(self.segment_2)
             self.segment_1 = self.segment_1 + character
