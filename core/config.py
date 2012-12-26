@@ -1,3 +1,12 @@
+#**************************************************#
+# file   : core/config.py                          #
+# author : Michel Trottier-McDonald                #
+# date   : December 2012                           #
+# description:                                     #
+# Load config.ini into python objects to be handed #
+# to the rest of the code                          #
+#**************************************************#
+
 import ConfigParser
 conf = ConfigParser.ConfigParser()
 conf.read('config.ini')

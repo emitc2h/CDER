@@ -1,5 +1,5 @@
 #**************************************************#
-# file   : display.py                              #
+# file   : core/display.py                         #
 # author : Michel Trottier-McDonald                #
 # date   : December 2012                           #
 # description:                                     #
