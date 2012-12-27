@@ -156,7 +156,7 @@ def delta_phi(phi1, phi2):
     """
     Find the smaller phi difference between two phi angles
     """
-	return min(in2pi(phi1 - phi2), in2pi(phi2 - phi1))
+    return min(in2pi(phi1 - phi2), in2pi(phi2 - phi1))
 
 
 
