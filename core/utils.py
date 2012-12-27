@@ -1,10 +1,16 @@
+#**************************************************#
+# file   : core/utils.py                           #
+# author : Michel Trottier-McDonald                #
+# date   : December 2012                           #
+# description:                                     #
+# A collection of tools to convert between         #
+# coordinate systems                               #
+#**************************************************#
+
+## Basic python import
 import math
 
-####################################################
-## A collection of tools to convert between ATLAS ##
-## and OpenGL coordinates                         ##
-####################################################
-
+## --------------------------------------- ##
 def cart_to_rap(cart_point):
     """
     cart_point is a 3-tuple representing a cartesian point (x, y, z).
@@ -24,6 +30,8 @@ def cart_to_rap(cart_point):
     return (r, eta, phi)
 
 
+
+## --------------------------------------- ##
 def rap_to_cart(rap_point):
     """
     rap_point is a 3-tuple representing an ATLAS pseudo-rapidity point (r, eta, phi).
@@ -43,6 +51,9 @@ def rap_to_cart(rap_point):
 
     return (x, y, z)
 
+
+
+## --------------------------------------- ##
 def cart_to_cyl(cart_point):
     """
     cart_point is a 3-tuple representing a cartesian point (x, y, z).
@@ -60,9 +71,11 @@ def cart_to_cyl(cart_point):
     return (r, z, phi)
 
 
+
+## --------------------------------------- ##
 def cyl_to_cart(cyl_point):
     """
-    rap_point is a 3-tuple representing an ATLAS cylindrical point (r, z, phi).
+    cyl_point is a 3-tuple representing an ATLAS cylindrical point (r, z, phi).
     Converts from ATLAS cylindrical to cartesian coordinates (x, y, z),
     r is the distance from the beam line, not the collision point.
     """
@@ -77,7 +90,15 @@ def cyl_to_cart(cyl_point):
     return (x, y, z)
 
 
+
+## --------------------------------------- ##
 def z_to_eta(cyl_point):
+    """
+    cyl_point is a 2-tuple containing radial (r) and longitudinal (z)
+    coordinates, what you need to figure out the polar angle w.r.t.
+    the transverse plane of the original coordinate system. The resulting
+    angle is pseudorapidity.
+    """
 
     r   = cyl_point[0]
     z   = cyl_point[1]
@@ -88,7 +109,13 @@ def z_to_eta(cyl_point):
     return eta
 
 
+
+## --------------------------------------- ##
 def eta_to_z(rap_point):
+    """
+    rap_point is a 2-tuple containing radial (r) and pseudorapidity (eta)
+    coordinates, what you need to figure out the longitudinal distance z.
+    """
 
     r   = rap_point[0]
     eta = rap_point[1]
@@ -100,9 +127,10 @@ def eta_to_z(rap_point):
     
 
 
+## --------------------------------------- ##
 def in2pi(phi):
 	"""
-	Take all phi values within 2*pi
+	Put all phi values within [0, 2*pi]
     """
     
 	while phi >= 2*math.pi : phi -= 2*math.pi
@@ -110,9 +138,11 @@ def in2pi(phi):
 	return phi
 
 
+
+## --------------------------------------- ##
 def inabspi(phi):
 	"""
-	Take all phi values within 2*pi
+	Take all phi values within [-pi, pi]
     """
     
 	while phi >= math.pi : phi -= 2*math.pi
@@ -120,18 +150,41 @@ def inabspi(phi):
 	return phi
 
 
+
+## --------------------------------------- ##
 def delta_phi(phi1, phi2):
+    """
+    Find the smaller phi difference between two phi angles
+    """
 	return min(in2pi(phi1 - phi2), in2pi(phi2 - phi1))
 
 
+
+## --------------------------------------- ##
 def deg_to_rad(angle):
+    """
+    converts a degree angle in radians
+    """
     return angle * math.pi/180.0
 
+
+
+## --------------------------------------- ##
 def rad_to_deg(angle):
+    """
+    converts a radian angle in degrees
+    """
     return angle * 180.0/math.pi
 
 
+
+## --------------------------------------- ##
 def sphy_to_sphz(theta, phi):
+    """
+    Convert two spherical angles from a spherical coordinate system defined
+    around y-axis to two spherical angles in a spherical coordinate system
+    defined around the z-axis
+    """
 
     x = math.cos(theta)
     z = math.cos(phi)*math.sin(theta)
