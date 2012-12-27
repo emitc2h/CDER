@@ -1,7 +1,21 @@
+#**************************************************#
+# file   : core/reader/reader.py                   #
+# author : Michel Trottier-McDonald                #
+# date   : December 2012                           #
+# description:                                     #
+# Generic class providing common facilities to     #
+# load ROOT TTrees from file and pass the events   #
+# to CDER                                          #
+#**************************************************#
+
+## ROOT imports
 from ROOT import TChain, TFile
+
+## Basic python imports
 import random as rand
 import copy
 
+## CDER particle types imports
 from ..particle.jet import Jet
 from ..particle.tau import Tau
 from ..particle.electron import Electron
@@ -9,24 +23,38 @@ from ..particle.muon import Muon
 from ..particle.photon import Photon
 from ..particle.met import MET
 
+## Default string for no cuts applied
 CUT_NO_SELECTION = 'No selection'
 
+
+####################################################
 class Reader():
 
+    ## --------------------------------------- ##
     def __init__(self, file_path, tree_name):
+        """
+        Constructor
+        """
 
         ## Load the file
         self.chain = TChain(tree_name)
         self.chain.Add(file_path)
 
-        ## Load the tree
+        ## tree to keep all events
         self.full_tree = self.chain
-        self.tree      = self.full_tree
-        self.cut_tree  = self.full_tree
-        
+
+        ## tree to keep inly events surviving cut
+        self.cut_tree = self.full_tree
+
+        ## Main tree reference
+        self.tree = self.full_tree
+
+
         ## Tree navigation
         self.entries = self.tree.GetEntries()
         self.event = -1
+
+        ## Cuts
         self.current_cut = CUT_NO_SELECTION
         self.history = []
 
@@ -45,6 +73,8 @@ class Reader():
         self.extra_information = {}
 
 
+
+    ## --------------------------------------- ##
     def reset(self):
         ## Empty the event particles
         self.event_particles = []
@@ -61,6 +91,8 @@ class Reader():
         self.terminal_height = 10
 
 
+
+    ## --------------------------------------- ##
     def next(self):
         
         if self.event < (self.entries-1):
@@ -75,9 +107,10 @@ class Reader():
         self.make_particles()
 
         return self.event_particles
-        
 
-            
+
+
+    ## --------------------------------------- ##
     def previous(self):
         
         if self.event > 0:
@@ -97,6 +130,8 @@ class Reader():
         return self.event_particles
 
 
+
+    ## --------------------------------------- ##
     def random(self):
 
         self.reset()
@@ -111,6 +146,8 @@ class Reader():
         return self.event_particles
 
 
+
+    ## --------------------------------------- ##
     def cut(self, cut_string):
         if cut_string != '':
             self.cut_tree = self.full_tree.CopyTree(cut_string)
@@ -128,32 +165,54 @@ class Reader():
             self.history.append(cut_string)
             self.history.reverse()
 
-        
+
+
+    ## --------------------------------------- ##
     def reset_cut(self):
         self.tree     = self.full_tree
         self.cut_tree = self.full_tree
         self.entries = self.full_tree.GetEntries()
         self.current_cut = CUT_NO_SELECTION
 
-        
+
+
+    ## --------------------------------------- ##
     def get_jets(self):
         print 'WARNING : get_jets() method not imlemented in current Reader'
 
+
+
+    ## --------------------------------------- ##
     def get_taus(self):
         print 'WARNING : get_taus() method not imlemented in current Reader'
 
+
+
+    ## --------------------------------------- ##
     def get_electrons(self):
         print 'WARNING : get_electrons() method not imlemented in current Reader'
 
+
+
+    ## --------------------------------------- ##
     def get_muons(self):
         print 'WARNING : get_muons() method not imlemented in current Reader'
 
+
+
+    ## --------------------------------------- ##
     def get_photons(self):
         print 'WARNING : get_photons() method not imlemented in current Reader'
 
+
+
+    ## --------------------------------------- ##
     def get_met(self):
         print 'WARNING : get_met() method not imlemented in current Reader'
 
+
+
+    ## --------------------------------------- ##
     def get_particles(self):
         self.get_jets()
         self.get_taus()
@@ -164,10 +223,14 @@ class Reader():
         self.get_extra_information()
 
 
+
+    ## --------------------------------------- ##
     def get_extra_information(self):
         pass
         
 
+
+    ## --------------------------------------- ##
     def make_particles(self):
         
         for jet in self.event_jets:
@@ -202,6 +265,8 @@ class Reader():
             pass
             
 
+
+    ## --------------------------------------- ##
     def print_event(self):
 
         if len(self.event_particles) == 0:
