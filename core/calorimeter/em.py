@@ -55,10 +55,10 @@ class EM_Calorimeter(calorimeter.Calorimeter):
         self.endcap_n_phi        = self.barrel_n_phi
 
         
-        ## Aspect, color and transparency
-        self.color_inner  = (0.1, 0.2, 0.35)
-        self.color_outer  = (0.2, 0.4, 0.7)
-        self.transparency = 0.05
+        ## Aspect, color and opacity
+        self.inner_color  = (0.1, 0.2, 0.35)
+        self.outer_color  = (0.2, 0.4, 0.7)
+        self.opacity = 0.05
 
         
         ## Calorimeter construction animation timing
@@ -81,9 +81,9 @@ class EM_Calorimeter(calorimeter.Calorimeter):
 							self.endcap_z_width),
 							self.endcap_n_phi,
 							cell.GEO_CYLINDRICAL,
-							self.color_inner,
-							self.color_outer,
-							self.transparency)
+							self.inner_color,
+							self.outer_color,
+							self.opacity)
 
         ## A-ring is the first to be constructed
         pyglet.clock.schedule_once(A_ring.set_in_motion, self.construct_A_side)
@@ -108,9 +108,9 @@ class EM_Calorimeter(calorimeter.Calorimeter):
                                   eta_width),
                                   self.barrel_n_phi,
                                   cell.GEO_PROJECTIVE,
-                                  self.color_inner,
-                                  self.color_outer,
-                                  self.transparency)
+                                  self.inner_color,
+                                  self.outer_color,
+                                  self.opacity)
 
             ## Set barrel rings in motion from A-side to C-side
             pyglet.clock.schedule_once(new_ring.set_in_motion, self.construct_first + i*construct_wait)
@@ -129,9 +129,9 @@ class EM_Calorimeter(calorimeter.Calorimeter):
 							self.endcap_z_width),
 							self.endcap_n_phi,
 							cell.GEO_CYLINDRICAL,
-							self.color_inner,
-							self.color_outer,
-							self.transparency)
+							self.inner_color,
+							self.outer_color,
+							self.opacity)
 
         ## C-ring is set in motion before last barrel ring (endcap inside the barrel)
         pyglet.clock.schedule_once(C_ring.set_in_motion, self.construct_C_side)

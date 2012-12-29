@@ -45,6 +45,11 @@ class HAD_Calorimeter(calorimeter.Calorimeter):
         self.barrel_n_z          = had_eta_divisions
         self.barrel_n_phi        = had_phi_divisions
 
+
+        ## Figure out eta width and divisions of rings
+        full_delta_z = self.barrel_max_abs_z*2 / (self.barrel_n_z - 1)
+        z_width = 0.9*full_delta_z
+
         
         ## Endcap parameters
         self.endcap_inner_radius = 0.20*self.barrel_inner_radius
@@ -54,10 +59,10 @@ class HAD_Calorimeter(calorimeter.Calorimeter):
         self.endcap_n_phi        = self.barrel_n_phi
 
 
-        ## Aspect, color and transparency
-        self.color_inner  = (0.35, 0.2, 0.1)
-        self.color_outer  = (0.7, 0.4, 0.2)
-        self.transparency = 0.05
+        ## Aspect, color and opacity
+        self.inner_color  = (0.35, 0.2, 0.1)
+        self.outer_color  = (0.7, 0.4, 0.2)
+        self.opacity = 0.05
 
         
         ## Coalescing calorimeter animation timing
@@ -80,9 +85,9 @@ class HAD_Calorimeter(calorimeter.Calorimeter):
                             self.endcap_z_width),
                             self.endcap_n_phi,
                             cell.GEO_CYLINDRICAL,
-                            self.color_inner,
-                            self.color_outer,
-                            self.transparency)
+                            self.inner_color,
+                            self.outer_color,
+                            self.opacity)
 
         ## A-ring is the first to be constructed
         pyglet.clock.schedule_once(A_ring.set_in_motion, self.construct_A_side)
@@ -93,10 +98,6 @@ class HAD_Calorimeter(calorimeter.Calorimeter):
 
         ## Barrel rings ##
         #----------------#
-
-        ## Instantiate barrel rings
-        full_delta_z = self.barrel_max_abs_z*2 / (self.barrel_n_z - 1)
-        z_width = 0.9*full_delta_z
         
         for i in range(self.barrel_n_z):
             z = self.barrel_max_abs_z - i*full_delta_z
@@ -110,9 +111,9 @@ class HAD_Calorimeter(calorimeter.Calorimeter):
                                  z_width),
                                  self.barrel_n_phi,
                                  cell.GEO_CYLINDRICAL,
-                                 self.color_inner,
-                                 self.color_outer,
-                                 self.transparency)
+                                 self.inner_color,
+                                 self.outer_color,
+                                 self.opacity)
 
             ## Set barrel rings in motion from A-side to C-side
             pyglet.clock.schedule_once(new_ring.set_in_motion, self.construct_first + i*construct_wait)
@@ -127,9 +128,9 @@ class HAD_Calorimeter(calorimeter.Calorimeter):
                             self.endcap_z_width),
                             self.endcap_n_phi,
                             cell.GEO_CYLINDRICAL,
-                            self.color_inner,
-                            self.color_outer,
-                            self.transparency)
+                            self.inner_color,
+                            self.outer_color,
+                            self.opacity)
 
         ## A-ring is the last to be constructed
         pyglet.clock.schedule_once(C_ring.set_in_motion, self.construct_C_side)

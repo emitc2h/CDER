@@ -23,7 +23,7 @@ GEO_CYLINDRICAL = 'cylindrical'
 class Cell():
 
     ## --------------------------------------- ##
-    def __init__(self, parameters, geometry, color_inner, color_outer, opacity=0.3):
+    def __init__(self, parameters, geometry, inner_color, outer_color, opacity=0.3):
         """
         Constructor
         """
