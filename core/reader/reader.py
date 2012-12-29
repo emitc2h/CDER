@@ -72,14 +72,21 @@ class Reader():
         ## extra information holder
         self.extra_information = {}
 
+        ## Set teminal height for nice output
+        self.terminal_height = 10
+
 
 
     ## --------------------------------------- ##
     def reset(self):
+        """
+        Erase the content of all containers
+        """
+        
         ## Empty the event particles
         self.event_particles = []
 
-        ## Empty particle data holders
+        ## Empty local particle data holders
         self.event_jets      = []
         self.event_taus      = []
         self.event_electrons = []
@@ -87,23 +94,28 @@ class Reader():
         self.event_photons   = []
         self.event_met       = None
 
-        ## Store teminal height for nice output
-        self.terminal_height = 10
-
 
 
     ## --------------------------------------- ##
     def next(self):
-        
+        """
+        Fetch next event into local containers
+        """
+
+        ## Increment local event iterator
         if self.event < (self.entries-1):
             self.event += 1
-            
+
+        ## Empty local containers
         self.reset()
-            
+
+        ## Set tree pointer to retrieve desired event data
         self.tree.GetEntry(self.event)
 
         ## Get new particle kinematics
         self.get_particles()
+
+        ## Convert these kinematics into particle objects
         self.make_particles()
 
         return self.event_particles
@@ -112,19 +124,28 @@ class Reader():
 
     ## --------------------------------------- ##
     def previous(self):
-        
+        """
+        Fetch previous event into local containers
+        """
+
+        ## Decrement local event iterator
         if self.event > 0:
             self.event -= 1
 
+        ## Initial iterator value is -1, make sure previous has good behavior
         if self.event < 0:
             self.event = 0
 
+        ## Empty local containers
         self.reset()
-            
+
+        ## Set tree pointer to retrieve desired event data
         self.tree.GetEntry(self.event)
 
         ## Get new particle kinematics
         self.get_particles()
+
+        ## Convert these kinematics
         self.make_particles()
 
         return self.event_particles
@@ -133,14 +154,23 @@ class Reader():
 
     ## --------------------------------------- ##
     def random(self):
+        """
+        Fetch random event into local containers
+        """
 
+        ## Empty local containers
         self.reset()
-        
+
+        ## Set local iterator to random value in allowed range
         self.event = rand.randint(0, (self.entries-1))
+
+        ## Set tree pointer to retrieve desired event data
         self.tree.GetEntry(self.event)
 
         ## Get new particle kinematics
         self.get_particles()
+
+        ## Convert these kinematics
         self.make_particles()
 
         return self.event_particles
@@ -149,9 +179,19 @@ class Reader():
 
     ## --------------------------------------- ##
     def cut(self, cut_string):
+        """
+        Select subset of events to inspect based on a cut
+        on an existing variable in the tree
+        """
+
+        ## Do not cut if nothing is entered
         if cut_string != '':
+
+            ## Apply the cut by copying a subset of the full tree
             self.cut_tree = self.full_tree.CopyTree(cut_string)
             self.tree     = self.cut_tree
+
+            ## Do not let CDER crash if the cut is not valid, jusr do nothing
             try:
                 self.entries = self.cut_tree.GetEntries()
                 self.current_cut = cut_string
@@ -160,7 +200,7 @@ class Reader():
                 print 'Bad cut expression : "%s". Resetting the full tree' % cut_string
                 self.current_cut = CUT_NO_SELECTION
 
-            ## Store in history
+            ## Store the cut string in the cut history
             self.history.reverse()
             self.history.append(cut_string)
             self.history.reverse()
@@ -169,6 +209,10 @@ class Reader():
 
     ## --------------------------------------- ##
     def reset_cut(self):
+        """
+        Remove the currently applied cut
+        """
+        
         self.tree     = self.full_tree
         self.cut_tree = self.full_tree
         self.entries = self.full_tree.GetEntries()
@@ -178,42 +222,69 @@ class Reader():
 
     ## --------------------------------------- ##
     def get_jets(self):
+        """
+        A method to obtain jet kinematics to be implemented in the derived reader class
+        """
+        
         print 'WARNING : get_jets() method not imlemented in current Reader'
 
 
 
     ## --------------------------------------- ##
     def get_taus(self):
+        """
+        A method to obtain tau kinematics to be implemented in the derived reader class
+        """
+        
         print 'WARNING : get_taus() method not imlemented in current Reader'
 
 
 
     ## --------------------------------------- ##
     def get_electrons(self):
+        """
+        A method to obtain electron kinematics to be implemented in the derived reader class
+        """
+        
         print 'WARNING : get_electrons() method not imlemented in current Reader'
 
 
 
     ## --------------------------------------- ##
     def get_muons(self):
+        """
+        A method to obtain muon kinematics to be implemented in the derived reader class
+        """
+        
         print 'WARNING : get_muons() method not imlemented in current Reader'
 
 
 
     ## --------------------------------------- ##
     def get_photons(self):
+        """
+        A method to obtain photon kinematics to be implemented in the derived reader class
+        """
+        
         print 'WARNING : get_photons() method not imlemented in current Reader'
 
 
 
     ## --------------------------------------- ##
     def get_met(self):
+        """
+        A method to obtain MET kinematics to be implemented in the derived reader class
+        """
+        
         print 'WARNING : get_met() method not imlemented in current Reader'
 
 
 
     ## --------------------------------------- ##
     def get_particles(self):
+        """Run all the kinematic getters
+        """
+        
         self.get_jets()
         self.get_taus()
         self.get_electrons()
@@ -226,13 +297,23 @@ class Reader():
 
     ## --------------------------------------- ##
     def get_extra_information(self):
+        """
+        A method to obtain variable (key) / content (value) pairs to be printed as
+        extra information. Ignore if not implemented.
+        """
+        
         pass
         
 
 
     ## --------------------------------------- ##
     def make_particles(self):
-        
+        """
+        Convert the obtained kinematics into particle objects to be displayed
+        """
+
+        ## Convert jets
+        ## 4 values: Pt, Eta, Phi, btag
         for jet in self.event_jets:
             btag = False
             try:
@@ -242,22 +323,32 @@ class Reader():
             new_jet = Jet(jet[0], jet[1], jet[2], btag)
             self.event_particles += new_jet.particles
 
+        ## Convert taus
+        ## 3 values: Pt, Eta, Phi
         for tau in self.event_taus:
             new_tau = Tau(tau[0], tau[1], tau[2])
             self.event_particles += new_tau.particles
 
+        ## Convert electrons
+        ## 3 values: Pt, Eta, Phi
         for el in self.event_electrons:
             new_el = Electron(el[0], el[1], el[2])
             self.event_particles += new_el.particles
 
+        ## Convert muons
+        ## 3 values: Pt, Eta, Phi
         for mu in self.event_muons:
             new_mu = Muon(mu[0], mu[1], mu[2])
             self.event_particles += new_mu.particles
 
+        ## Convert photons
+        ## 3 values: Pt, Eta,Phi
         for ph in self.event_photons:
             new_ph = Photon(ph[0], ph[1], ph[2])
             self.event_particles += new_ph.particles
 
+        ## Convert MET
+        ## 2 values: Magnitude, Phi
         try:
             met = MET(self.event_met[0], self.event_met[1])
             self.event_particles += met.particles
@@ -268,13 +359,23 @@ class Reader():
 
     ## --------------------------------------- ##
     def print_event(self):
+        """
+        Print the kinematics and extra information to terminal
+        """
 
+        ## Do not do anything if no information is stored locally
         if len(self.event_particles) == 0:
             return
         
         ## Clear terminal
         print chr(27) + "[2J"
+
+
         
+        ## Print kinematics table ##
+        #--------------------------#
+        
+        ## Print header and legend
         print '===='*14
         print '| Event      | {:<40d}|'.format(self.event)
         
@@ -282,34 +383,42 @@ class Reader():
         print '| object     | {:<12}| {:<12}| {:<12}|'.format('pt [GeV]', 'eta', 'phi')
         print '----'*14
 
+        ## Record the number of lines taken by the kinematics to always place the
+        ## kinematics table at the same height
         n_lines = 0
-        
+
+        ## Print electrons
         for el in self.event_electrons:
             print '| \033[34melectron\033[0m   | {:<12.2f}| {:<12.2f}| {:<12.2f}|'.format(el[0]/1000.0,
                                                                                       el[1],
                                                                                       el[2])
             n_lines +=1
 
+        ## Print muons
         for mu in self.event_muons:
             print '| \033[35mmuon\033[0m       | {:<12.2f}| {:<12.2f}| {:<12.2f}|'.format(mu[0]/1000.0,
                                                                                       mu[1],
                                                                                       mu[2])
             n_lines +=1
-        
+
+        ## Print taus
         for tau in self.event_taus:
             print '| \033[33mtau\033[0m        | {:<12.2f}| {:<12.2f}| {:<12.2f}|'.format(tau[0]/1000.0,
                                                                                       tau[1],
                                                                                       tau[2])
             n_lines +=1
 
+        ## Print photons
         for ph in self.event_photons:
             print '| \033[34mphoton\033[0m     | {:<12.2f}| {:<12.2f}| {:<12.2f}|'.format(ph[0]/1000.0,
                                                                                       ph[1],
                                                                                       ph[2])
             n_lines +=1
 
+        ## Print jets
         for jet in self.event_jets:
             try:
+                ## Change jet label color if btag jet
                 if jet[3]:
                     print '| \033[36mjet\033[0m        | {:<12.2f}| {:<12.2f}| {:<12.2f}|'.format(jet[0]/1000.0,
                                                                                               jet[1],
@@ -325,6 +434,7 @@ class Reader():
                                                                                           jet[2])
             n_lines +=1
 
+        ## Print MET
         try:
             print '| \033[32mMET\033[0m        | {:<12.2f}| {:<12}| {:<12.2f}|'.format(self.event_met[0]/1000.0,
                                                                                        '----', 
@@ -334,9 +444,15 @@ class Reader():
 
         print '===='*14
 
-        ## Print extra information
+
+        
+        ## Print extra information ##
+        #---------------------------#
+
+        ## Do not print if there is no extra information
         if len(self.extra_information) > 0:
 
+            ## Find out the longest variable name and adjust the table width accordingly
             max_word_length = 0
             
             for key in self.extra_information.iterkeys():
@@ -344,19 +460,22 @@ class Reader():
                 if key_word_length > max_word_length:
                     max_word_length = key_word_length
 
+            ## Print table header
             print '\n'*(15-n_lines)
             print '='*(max_word_length+21)
             title = '| {:<%d} |' % (max_word_length+17)
             print title.format('Extra Information')
             print '-'*(max_word_length+21)
 
+            ## Print variable-content pairs
             for key in sorted(self.extra_information.iterkeys()):
                 n_lines += 1
                 information_string = '| {:<%s}| {:<14%s} |' % (max_word_length+1, self.extra_information[key][1])
                 print information_string.format(key, self.extra_information[key][0])
 
             print '='*(max_word_length+21)
-        
+
+        ## Print Number of events available for display and current cut applied
         print '\n'*(self.terminal_height)
         print '\033[31mEvents :\033[0m %d   \033[31mselection :\033[0m %s' % (self.entries, self.current_cut)
 

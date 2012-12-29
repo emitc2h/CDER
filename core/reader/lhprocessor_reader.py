@@ -1,44 +1,109 @@
-## Enable ROOT to read vectors
-from ROOT import gROOT
-gROOT.ProcessLine('.L core/reader/addVectorToROOT.C+')
+#**************************************************#
+# file   : core/reader/lhprocessor_reader.py       #
+# author : Michel Trottier-McDonald                #
+# date   : December 2012                           #
+# description:                                     #
+# A reader to read LHProcessor.*.root files        #
+#**************************************************#
 
+## ROOT imports
+from ROOT import gROOT
+
+## CDER imports
 from reader import Reader
 
+## Enable ROOT to read std::vectors
+gROOT.ProcessLine('.L core/reader/addVectorToROOT.C+')
+
+####################################################
 class Custom_Reader(Reader):
 
+    ## --------------------------------------- ##
     def __init__(self, file_path, tree_name):
+        """
+        Constructor
+        """
+        
         Reader.__init__(self, file_path, tree_name)
 
+
+        
+    ## --------------------------------------- ##
     def get_jets(self):
+        """
+        Jets
+        """
+        
         njets = len( self.tree.jet_fourvect )
         for i in range(njets):
             jet = self.tree.jet_fourvect[i]
             btag = (self.tree.jet_btag[i] > 0.722)
             self.event_jets.append((jet.Pt(), jet.Eta(), jet.Phi(), btag))
 
+
+            
+    ## --------------------------------------- ##
     def get_taus(self):
+        """
+        Taus
+        """
+        
         tau = self.tree.tau_fourvect
         self.event_taus.append((tau.Pt(), tau.Eta(), tau.Phi()))
 
+
+        
+    ## --------------------------------------- ##
     def get_muons(self):
+        """
+        Muons
+        """
+        
         lep_type = self.tree.lep_leptype
         if self.tree.lep_leptype == 0:
             mu = self.tree.lep_fourvect
             self.event_muons.append((mu.Pt(), mu.Eta(), mu.Phi()))
 
+
+            
+    ## --------------------------------------- ##
     def get_electrons(self):
+        """
+        Electrons
+        """
+        
         lep_type = self.tree.lep_leptype
         if self.tree.lep_leptype == 1:
             el = self.tree.lep_fourvect
             self.event_electrons.append((el.Pt(), el.Eta(), el.Phi()))
 
+
+            
+    ## --------------------------------------- ##
     def get_photons(self):
+        """
+        Photons (no photons in this analysis)
+        """
+        
         return
 
+
+    
+    ## --------------------------------------- ##
     def get_met(self):
+        """
+        MET
+        """
+        
         self.event_met = (self.tree.MET_vect.Mod(), self.tree.MET_vect.Phi())
 
+
+        
+    ## --------------------------------------- ##
     def get_extra_information(self):
+        """
+        Extra information
+        """
 
         ## Sphericity
         self.extra_information['sphericity'] = (self.tree.sphericity, '.3f')
