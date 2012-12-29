@@ -73,7 +73,7 @@ class Reader():
         self.extra_information = {}
 
         ## Set teminal height for nice output
-        self.terminal_height = 10
+        self.terminal_adjust_height = 10
 
 
 
@@ -476,6 +476,6 @@ class Reader():
             print '='*(max_word_length+21)
 
         ## Print Number of events available for display and current cut applied
-        print '\n'*(self.terminal_height)
+        print '\n'*(self.terminal_adjust_height)
         print '\033[31mEvents :\033[0m %d   \033[31mselection :\033[0m %s' % (self.entries, self.current_cut)
 
