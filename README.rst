@@ -44,4 +44,4 @@ https://bitbucket.org/emitc2h/cder/wiki/Home
 Screenshots
 -----------
 
-.. image:: https://bitbucket.org/emitc2h/cder/raw/5f70f7b0e5362fef614f5abd90f326fc2854306f/core/images/example.png
+.. image:: https://bitbucket.org/emitc2h/cder/raw/3b60c54c04dcd2734dbe29cd75512c34acd5e3e5/core/images/example.png
