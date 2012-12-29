@@ -220,7 +220,7 @@ class Display(pyglet.window.Window):
                     self.particles = self.reader.random()
 
                 ## Print out event information to terminal
-                #self.reader.print_event()
+                self.reader.print_event()
 
                 ## Beam collision animation
                 self.beam.start()

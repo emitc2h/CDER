@@ -1,24 +1,42 @@
-import calorimeter, ring, cell
+#**************************************************#
+# file   : core/calorimeter/had.py                 #
+# author : Michel Trottier-McDonald                #
+# date   : December 2012                           #
+# description:                                     #
+# A simple HAD calorimeter with cylindrical        #
+# geometry                                         #
+#**************************************************#
+
+## Pyglet imports
 import pyglet
+
+## Basic python imports
 import math
+
+## CDER imports
+import calorimeter, ring, cell
 from ..config import *
 
 ####################################################
-## Makes an EM barrel                             ##
-####################################################
-
 class HAD_Calorimeter(calorimeter.Calorimeter):
 
+    ## --------------------------------------- ##
     def __init__(self):
         """
         Constructor
         """
 
-        ## Initiate parent class
+        ## Base class constructor
         calorimeter.Calorimeter.__init__(self)
+
+
+
+        ## Calorimeter configuration ##
+        #-----------------------------#
 
         ## Calorimeter type
         self.calo_type = calorimeter.CALO_HAD
+
         
         ## Barrel parameters
         self.barrel_inner_radius = had_inner_radius 
@@ -27,10 +45,7 @@ class HAD_Calorimeter(calorimeter.Calorimeter):
         self.barrel_n_z          = had_eta_divisions
         self.barrel_n_phi        = had_phi_divisions
 
-        ## Instantiate barrel rings
-        full_delta_z = self.barrel_max_abs_z*2 / (self.barrel_n_z - 1)
-        z_width = 0.9*full_delta_z
-
+        
         ## Endcap parameters
         self.endcap_inner_radius = 0.20*self.barrel_inner_radius
         self.endcap_outer_radius = self.barrel_outer_radius
@@ -46,13 +61,17 @@ class HAD_Calorimeter(calorimeter.Calorimeter):
 
         
         ## Coalescing calorimeter animation timing
-        self.coalesce_A_side = 3.5
-        self.coalesce_first = 3.7857
-        self.coalesce_last = 5.7857
-        self.coalesce_C_side = 6.0
+        self.construct_A_side = 3.5
+        self.construct_first = 3.7857
+        self.construct_last = 5.7857
+        self.construct_C_side = 6.0
 
-        coalesce_wait = (self.coalesce_last - self.coalesce_first)/self.barrel_n_z
+        construct_wait = (self.construct_last - self.construct_first)/self.barrel_n_z
 
+
+
+        ## A endcap ring ##
+        #-----------------#
 
         ## Instantiate A-side ring
         A_ring = ring.Ring((self.endcap_inner_radius,
@@ -65,13 +84,24 @@ class HAD_Calorimeter(calorimeter.Calorimeter):
                             self.color_outer,
                             self.transparency)
 
-        pyglet.clock.schedule_once(A_ring.set_in_motion, self.coalesce_A_side)
+        ## A-ring is the first to be constructed
+        pyglet.clock.schedule_once(A_ring.set_in_motion, self.construct_A_side)
 
         self.rings.append(A_ring)
+
+
+
+        ## Barrel rings ##
+        #----------------#
+
+        ## Instantiate barrel rings
+        full_delta_z = self.barrel_max_abs_z*2 / (self.barrel_n_z - 1)
+        z_width = 0.9*full_delta_z
         
         for i in range(self.barrel_n_z):
             z = self.barrel_max_abs_z - i*full_delta_z
 
+            ## Separate barrel and extended barrels
             if i==2 or i==7: continue
 
             new_ring =ring.Ring((self.barrel_inner_radius,
@@ -84,7 +114,8 @@ class HAD_Calorimeter(calorimeter.Calorimeter):
                                  self.color_outer,
                                  self.transparency)
 
-            pyglet.clock.schedule_once(new_ring.set_in_motion, self.coalesce_first + i*coalesce_wait)
+            ## Set barrel rings in motion from A-side to C-side
+            pyglet.clock.schedule_once(new_ring.set_in_motion, self.construct_first + i*construct_wait)
             
             self.rings.append(new_ring)
 
@@ -100,6 +131,7 @@ class HAD_Calorimeter(calorimeter.Calorimeter):
                             self.color_outer,
                             self.transparency)
 
-        pyglet.clock.schedule_once(C_ring.set_in_motion, self.coalesce_C_side)
+        ## A-ring is the last to be constructed
+        pyglet.clock.schedule_once(C_ring.set_in_motion, self.construct_C_side)
 
         self.rings.append(C_ring)

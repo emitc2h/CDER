@@ -79,12 +79,12 @@ class Particle():
         cartesian_endpoint = rap_to_cart((em_inner_radius, self.eta, self.phi))
 
         ## Check that z is above em endcap
-        self.in_barrel = False
+        self.in_endcap = False
             
         ## Identify if the particle ends up in the barrel region,
         ## Change the endpoint radial distance accordingly
         if abs(cartesian_endpoint[2]) >= em_inner_z:
-            self.in_barrel = True
+            self.in_endcap = True
             self.end_r = (em_inner_z/abs(cartesian_endpoint[2]))*em_inner_radius
 
         ## Calculate the new cartesian endpoint
@@ -158,7 +158,6 @@ class Particle():
 
         ## Elongate particle domain as long as it hasn't reached its destination
         if self.is_travelling:
-            print self.r, self.pt
             if self.r < self.end_r:
                 if self.is_min_ion:
                     self.r += 3*particle_speed*math.log(self.pt/1000.0 + 1.0)

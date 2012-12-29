@@ -73,7 +73,7 @@ class Reader():
         self.extra_information = {}
 
         ## Set teminal height for nice output
-        self.terminal_adjust_height = 10
+        self.terminal_adjust_height = 4
 
 
 
@@ -105,6 +105,10 @@ class Reader():
         ## Increment local event iterator
         if self.event < (self.entries-1):
             self.event += 1
+
+        ## Make sure next has good behavior after cut
+        if self.event > (self.entries-1):
+            self.event = (self.entries-1)
 
         ## Empty local containers
         self.reset()
@@ -461,7 +465,7 @@ class Reader():
                     max_word_length = key_word_length
 
             ## Print table header
-            print '\n'*(15-n_lines)
+            print '\n'*(12-n_lines)
             print '='*(max_word_length+21)
             title = '| {:<%d} |' % (max_word_length+17)
             print title.format('Extra Information')
