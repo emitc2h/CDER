@@ -44,7 +44,7 @@ class Jet(Object):
         """
 
         ## Number of particles go with jet Pt (approximate)
-        n_max = int(math.log(self.pt/1000.0))
+        n_max = int(math.log(self.pt/1000.0 + 1.0))
 
         ## At least two charged particles
         n_charged = random.randint(2,n_max)

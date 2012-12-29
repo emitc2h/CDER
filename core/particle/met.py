@@ -26,7 +26,7 @@ class MET(Object):
         Object.__init__(self, pt, 0.0, phi)
 
         ## Brightness of the MET beam goes with MET magnitude
-        intensity = 0.01*math.log(self.pt/1000.0)
+        intensity = 0.01*math.log(self.pt/1000.0 + 1.0)
 
         ## MET is green
         self.color = (0.0, intensity, 0.0)

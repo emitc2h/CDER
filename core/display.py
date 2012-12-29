@@ -199,8 +199,7 @@ class Display(pyglet.window.Window):
                 ## Prepare for new event, remove particles from old event
                 for particle in self.particles:
                     particle.hide()
-                    lepton_system.remove_group(particle.group)
-                    lepton_system.remove_group(particle.sparks)
+                    lepton_system.remove_group(particle.particle_group)
 
                 self.particles = []
 
@@ -221,7 +220,7 @@ class Display(pyglet.window.Window):
                     self.particles = self.reader.random()
 
                 ## Print out event information to terminal
-                self.reader.print_event()
+                #self.reader.print_event()
 
                 ## Beam collision animation
                 self.beam.start()

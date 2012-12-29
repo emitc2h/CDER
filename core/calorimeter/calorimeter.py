@@ -87,7 +87,7 @@ class Calorimeter():
                 particle.calo_hit_EM = True
                 particle.calo_hit_HAD = True
                         
-                pt = math.log(particle.pt/1000.0)
+                pt = math.log(particle.pt/1000.0 + 1.0)
                 for cell in target_cells:
                     dR   = particle.dR(cell)
                     max_transparency = 0.4

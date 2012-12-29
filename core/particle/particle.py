@@ -158,11 +158,12 @@ class Particle():
 
         ## Elongate particle domain as long as it hasn't reached its destination
         if self.is_travelling:
+            print self.r, self.pt
             if self.r < self.end_r:
                 if self.is_min_ion:
-                    self.r += 3*particle_speed*math.log(self.pt/1000.0)
+                    self.r += 3*particle_speed*math.log(self.pt/1000.0 + 1.0)
                 else:
-                    self.r += particle_speed*math.log(self.pt/1000.0)
+                    self.r += particle_speed*math.log(self.pt/1000.0 + 1.0)
 
             ## If the particle reached its destination, stop animation
             else:
