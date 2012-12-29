@@ -1,57 +1,45 @@
 .. image:: https://bitbucket.org/emitc2h/cder/raw/5f70f7b0e5362fef614f5abd90f326fc2854306f/core/images/logo.png
+   :scale: 25
 
-What is this?
+What is CDER?
 -------------
 
-CDER (ColliDER) is a high-level event visualiser interfacing ROOT ntuples
-of a pre-determined format to an OpenGL graphics display. CDER depends
-on ROOT, pyglet and py-lepton::
+CDER (ColliDER) is a particle physics event visualizer focusing on
+high-level objects such as fully reconstructed jets and leptons. The
+purpose of CDER is to explore the topology of physics processes. CDER
+is designed to be fluid, simple and pretty. It makes extensive use of
+the following packages, which must be installed locally::
 
     http://root.cern.ch/drupal/
     http://www.pyglet.org/
     http://code.google.com/p/py-lepton/
 
-The code is not strongly dependent on versions, but I'll try
-to recommend specific versions in the future here.
-
-On the other hand, all packages should be compiled in 32
-bits. py-lepton is not working very well in 64 bits, so ROOT must
-be compiled in 32 bits as well for CDER to work. I hope this will be
-resolved in the future.
+CDER itself does not need to be compiled or installed. It should run
+out-of-the-box given that the three packages mentioned are installed
+and working.
 
 
 Important
 ---------
 
-CDER does not run in 64 bits. Run in 32-bit mode (python-32). This is
-because of the nature of the super-fast random number generators in
-py-lepton, and the treatment of OpenGL graphics by pyglet.
+CDER does not yet run in 64 bits. Run in 32-bit mode (python-32). This
+is because of the nature of the super-fast random number generators in
+py-lepton. This should be fixed at some point in the future.
 
-How does it work?
------------------
 
-Simply specify an input file by setting in core/config.py::
+(Very) quick start
+------------------
 
-    filename = 'YourROOTfile.root'
-    treename = 'TheTreeInYourROOTfile'
-
-and then launch collider::
+To launch CDER with the example events::
 
     python-32 CDER.py
 
-Pressing the right(left) arrow key lets you navigate to the
-next(previous) event in the tree. Pressing the up/down key gives you a
-randomly selected event.
+For more information, press 'h' for help and take a look at the wiki::
 
-Click and drag to rotate around the scene, wheel up/down to zoom
-in/out.
-
-You can adjust the complexity of the calorimeters (and take it away
-altogether) by changing the parameters in config.py. This may be
-useful if the refresh rate is not fast enough.
+    https://bitbucket.org/emitc2h/cder/wiki/Home
 
 
-What does it look like?
------------------------
+Screenshots
+-----------
 
 .. image:: https://bitbucket.org/emitc2h/cder/raw/5f70f7b0e5362fef614f5abd90f326fc2854306f/core/images/example.png
