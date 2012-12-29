@@ -8,7 +8,7 @@ CDER (ColliDER) is a particle physics event visualizer focusing on
 high-level objects such as fully reconstructed jets and leptons. The
 purpose of CDER is to explore the topology of physics processes. CDER
 is designed to be fluid, simple and pretty. It makes extensive use of
-the following packages, which must be installed locally::
+the following packages, which must be installed locally:
 
 .. http://root.cern.ch/drupal/
 .. http://www.pyglet.org/
@@ -34,7 +34,7 @@ To launch CDER with the example events::
 
     python-32 CDER.py
 
-For more information, press 'h' for help and take a look at the wiki::
+For more information, press 'h' for help and take a look at the wiki:
 
 .. https://bitbucket.org/emitc2h/cder/wiki/Home
 
