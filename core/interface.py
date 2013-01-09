@@ -180,8 +180,8 @@ class Interface():
         self.cut.y = window_height*0.16
 
         self.cut_reset.scale = 0.4 * scale
+        self.cut_reset.x = window_width/2
         self.cut_reset.y = window_height*0.16
-        self.cut_reset.y = window_width/2
 
         
         ## Reposition text field

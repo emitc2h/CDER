@@ -122,12 +122,14 @@ class Reader():
         """
 
         ## Increment local event iterator
-        if self.event < (self.entries-1):
+        if self.event <= (self.entries-1):
             self.event += 1
 
         ## Make sure next has good behavior after cut
         if self.event > (self.entries-1):
             self.event = (self.entries-1)
+            ## No new event is selected, tell Display
+            return None
 
         ## Empty local containers
         self.reset()
@@ -152,12 +154,14 @@ class Reader():
         """
 
         ## Decrement local event iterator
-        if self.event > 0:
+        if self.event >= 0:
             self.event -= 1
 
         ## Initial iterator value is -1, make sure previous has good behavior
         if self.event < 0:
             self.event = 0
+            ## No new event is selected, tell Display
+            return None
 
         ## Empty local containers
         self.reset()

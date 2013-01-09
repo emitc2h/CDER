@@ -232,37 +232,39 @@ class Display(pyglet.window.Window):
             ## Event navigation
             if symbol == key.LEFT or symbol == key.RIGHT or symbol == key.UP or symbol == key.DOWN:
 
-                ## Prepare for new event, remove particles from old event
-                for particle in self.particles:
-                    particle.hide()
-                    lepton_system.remove_group(particle.particle_group)
-
-                self.particles = []
-
-                ## Remove calorimeter energy
-                for calo in self.calorimeters:
-                    calo.reset()
-
                 ## Load particles from previous event
                 if symbol == key.LEFT:
-                    self.particles = self.reader.previous()
+                    new_particles = self.reader.previous()
 
                 ## Load particles from next event
                 if symbol == key.RIGHT:
-                    self.particles = self.reader.next()
+                    new_particles = self.reader.next()
 
                 ## Load particles from a random event
                 if symbol == key.UP or symbol == key.DOWN:
-                    self.particles = self.reader.random()
+                    new_particles = self.reader.random()
 
-                ## Print out event information to terminal
-                self.reader.print_event()
+                if new_particles is not None:
+                    
+                    ## Prepare for new event, remove particles from old event
+                    for particle in self.particles:
+                        particle.hide()
+                        lepton_system.remove_group(particle.particle_group)
 
-                ## Beam collision animation
-                self.beam.start()
+                    self.particles = new_particles
 
-                ## Allow modification of calorimeter openGL primitives
-                self.allow_calo_update = True
+                    ## Remove calorimeter energy
+                    for calo in self.calorimeters:
+                        calo.reset()
+
+                    ## Print out event information to terminal
+                    self.reader.print_event()
+
+                    ## Beam collision animation
+                    self.beam.start()
+
+                    ## Allow modification of calorimeter openGL primitives
+                    self.allow_calo_update = True
 
 
         ## Text editor controls
