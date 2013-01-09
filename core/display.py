@@ -70,7 +70,7 @@ class Display(pyglet.window.Window):
         self.zoom = 15.0
 
         ## Automatic rotation
-        self.omega = 30.0
+        self.omega = config.camera_rotation_speed
         self.rotating = True
 
         ## Window size
