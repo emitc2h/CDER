@@ -207,6 +207,9 @@ class Reader():
         on an existing variable in the tree
         """
 
+        ## Flag for sucessful cut
+        cut_applied = False
+        
         ## Do not cut if nothing is entered
         if cut_string != '':
 
@@ -218,15 +221,19 @@ class Reader():
             try:
                 self.entries = self.cut_tree.GetEntries()
                 self.current_cut = cut_string
+                cut_applied = True
             except TypeError:
                 self.tree = self.full_tree
                 print 'Bad cut expression : "%s". Resetting the full tree' % cut_string
                 self.current_cut = CUT_NO_SELECTION
+                cut_applied = False
 
             ## Store the cut string in the cut history
             self.history.reverse()
             self.history.append(cut_string)
             self.history.reverse()
+
+        return cut_applied
 
 
 

@@ -339,24 +339,24 @@ class Display(pyglet.window.Window):
                     self.interface.set_text('')
                     self.interface.toggle_cut()
                 ## Pass cut string to ROOT file reader
-                self.reader.cut(self.text_editor.text_output)
+                if self.reader.cut(self.text_editor.text_output):
 
-                ## Prepare for new event, remove particles from old event
-                for particle in self.particles:
-                    particle.hide()
-                    lepton_system.remove_group(particle.particle_group)
+                    ## Prepare for new event, remove particles from old event
+                    for particle in self.particles:
+                        particle.hide()
+                        lepton_system.remove_group(particle.particle_group)
 
-                self.particles = []
-
-                ## Remove calorimeter energy
-                for calo in self.calorimeters:
-                    calo.reset()
+                    self.particles = []
+                    
+                    ## Remove calorimeter energy
+                    for calo in self.calorimeters:
+                        calo.reset()
                 
-                ## Select a random event that passes the cut, print and display
-                self.particles = self.reader.random()
-                self.reader.print_event()
-                self.beam.start()
-                self.allow_calo_update = True
+                    ## Select a random event that passes the cut, print and display
+                    self.particles = self.reader.random()
+                    self.reader.print_event()
+                    self.beam.start()
+                    self.allow_calo_update = True
                 
 
         ## Quit CDER
