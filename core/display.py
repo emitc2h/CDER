@@ -65,9 +65,13 @@ class Display(pyglet.window.Window):
                                       config=window_config)
 
         ## Initial point of view
-        self.yaw = -57.0
+        self.yaw = -90.0
         self.pitch = -20.0
         self.zoom = 15.0
+
+        ## Automatic rotation
+        self.omega = 30.0
+        self.rotating = True
 
         ## Window size
         self.width=800
@@ -198,15 +202,28 @@ class Display(pyglet.window.Window):
 
             ## Transverse view
             if symbol == key.A:
+                ## Stop automatic rotation
+                self.rotating = False
+                
                 self.yaw = 0.0
                 self.pitch = 0.0
                 self.zoom = 15.0
 
             ## Longitudinal view
             if symbol == key.S:
+                ## Stop automatic rotation
+                self.rotating = False
+                
                 self.yaw = -90.0
                 self.pitch = 0.0
                 self.zoom = 15.0
+
+            ## Toggle automatic rotation
+            if symbol == key.D:
+                if not self.rotating:
+                    self.rotating = True
+                elif self.rotating:
+                    self.rotating = False
 
             ## Toggle help screen
             if symbol == key.H:
@@ -419,6 +436,15 @@ class Display(pyglet.window.Window):
         Update the displayed 3D and 2D scenes
         """
 
+        ## Automatic rotation
+        if self.rotating:
+            self.yaw += self.omega * dt
+            ## Do not allow yaw to grow arbitrarily large
+            if self.yaw > 180.0:
+                self.yaw = self.yaw - 360.0
+            if self.yaw < -180.0:
+                self.yaw = self.yaw + 360.0
+        
         ## Update beam positions (only during beam animation)
         if self.beam.incoming:
             self.beam.update(dt)

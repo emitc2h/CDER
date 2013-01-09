@@ -162,8 +162,10 @@ class Interface():
         self.logo.scale = scale * self.max_scale_logo
 
 
-        ## Scale help message
+        ## Scale help message and re-center
         self.help.scale = 0.4 * scale
+        self.help.x = window_width/2
+        self.help.y = window_height/2
 
 
         ## Scale and reposition help pointer
@@ -173,11 +175,13 @@ class Interface():
 
 
         ## Scale and reposition cut messages
-        self.cut.y = window_height*0.16
         self.cut.scale = 0.4 * scale
+        self.cut.x = window_width/2
+        self.cut.y = window_height*0.16
 
-        self.cut_reset.y = window_height*0.16
         self.cut_reset.scale = 0.4 * scale
+        self.cut_reset.y = window_height*0.16
+        self.cut_reset.y = window_width/2
 
         
         ## Reposition text field
