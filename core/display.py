@@ -421,7 +421,7 @@ class Display(pyglet.window.Window):
         """
 
         ## Rendering options
-        glDisable(GL_DEPTH_TEST) 
+        #glDisable(GL_DEPTH_TEST) 
 
         ## Perspective options
         glMatrixMode(GL_PROJECTION)
@@ -540,4 +540,4 @@ class Display(pyglet.window.Window):
         self.interface.draw()
 
         ## Switch back to 3D scene to allow for manipulation
-        self.mode_3D()
+        #self.mode_3D()
