@@ -43,6 +43,10 @@ CDER is placed under the GNU General Public Licence
 
 http://www.gnu.org/licenses/
 
+There is a video introduction to CDER on YouTube
+
+http://www.youtube.com/watch?feature=player_embedded&v=yNUoKvdd0yI
+
 
 Important
 ---------
