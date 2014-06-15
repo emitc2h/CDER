@@ -32,10 +32,6 @@ from pyglet.gl import *
 from pyglet.window import key
 from pyglet.window import mouse
 
-## Lepton imports
-from lepton import default_system as lepton_system
-from lepton.controller import Lifetime, Movement, Fader
-
 ## Basic python imports
 import math, random, importlib
 
@@ -102,12 +98,6 @@ class Display(pyglet.window.Window):
         ## pyglet time control
         pyglet.clock.schedule_interval(self.update, 1.0/self.refresh_rate)
 
-        ## Specify default behaviour of lepton particles
-        lepton_system.add_global_controller(
-            Movement(min_velocity=0.0),
-            Lifetime(1.0),
-            Fader(max_alpha=0.7, fade_out_start=0.05, fade_out_end=0.2),
-            )
     
 
 
@@ -249,7 +239,6 @@ class Display(pyglet.window.Window):
                     ## Prepare for new event, remove particles from old event
                     for particle in self.particles:
                         particle.hide()
-                        lepton_system.remove_group(particle.particle_group)
 
                     self.particles = new_particles
 
@@ -346,8 +335,7 @@ class Display(pyglet.window.Window):
                     ## Prepare for new event, remove particles from old event
                     for particle in self.particles:
                         particle.hide()
-                        lepton_system.remove_group(particle.particle_group)
-
+# 
                     self.particles = []
                     
                     ## Remove calorimeter energy
@@ -472,9 +460,6 @@ class Display(pyglet.window.Window):
         for particle in self.particles:
             particle.update(dt)
 
-        ## Update lepton system
-        lepton_system.update(dt) 
-                
         ## Update calorimeters
         for calo in self.calorimeters:
             calo.update(dt)
@@ -518,9 +503,6 @@ class Display(pyglet.window.Window):
         ## Rotate the scene to emulate pitch
         glRotatef(self.pitch, math.cos(phi_camera), 0.0, math.sin(phi_camera))
 
-        ## Draw lepton particles
-        lepton_system.draw()
-
         ## Determine camera position w.r.t. calorimeter coordinate system
         ## This allow ordering of cell drawing in case of disabled depth test
         theta_camera += math.pi/2
@@ -540,4 +522,4 @@ class Display(pyglet.window.Window):
         self.interface.draw()
 
         ## Switch back to 3D scene to allow for manipulation
-        #self.mode_3D()
+        self.mode_3D()

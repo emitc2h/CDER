@@ -31,13 +31,6 @@
 from pyglet import image
 from pyglet.gl import *
 
-## Lepton imports
-from lepton import Particle as lepParticle, ParticleGroup, domain, default_system
-from lepton.renderer import BillboardRenderer
-from lepton.texturizer import SpriteTexturizer
-from lepton.emitter import StaticEmitter
-from lepton.controller import Lifetime
-
 ## Basic python imports
 import os, math, time
 
@@ -109,10 +102,6 @@ class Particle():
         ## Calculate the new cartesian endpoint
         cartesian_endpoint = rap_to_cart((self.r, self.eta, self.phi))
 
-        ## Define the particle domain
-        self.particle_line = domain.Line((0.0, 0.0, 0.0),
-                                         cartesian_endpoint)
-
 
 
         ## Particle display properties ##
@@ -129,23 +118,6 @@ class Particle():
         if wide:
             width =(0.5,0.5,0.0)
 
-        ## Define particle emitter
-        self.particle = StaticEmitter(
-            rate=rate,
-            position=self.particle_line,
-            template=lepParticle(
-                size=width,
-                color=color
-                )
-            )
-
-        ## Define the sprites populating the beam
-        self.spark_tex = image.load(os.path.join(os.path.dirname(__file__), '../images/wisp.png'))
-
-        ## Particle group that controls if the particle is displayed or not
-        self.particle_group = ParticleGroup(controllers=[], 
-                                   renderer=BillboardRenderer(SpriteTexturizer(self.spark_tex.get_texture().id)))
-
         
 
     ## --------------------------------------- ##
@@ -153,19 +125,6 @@ class Particle():
         """
         Show the particle (initiate animation)
         """
-        
-        if not self.particle in self.particle_group.controllers:
-            
-            ## Set particle domain length
-            self.particle_line.end_point = rap_to_cart((self.r, self.eta, self.phi))
-
-            ## Add particle to particle group
-            self.particle_group.bind_controller(self.particle)
-
-            ## Initiate animation parameters
-            self.is_travelling = True
-            self.calo_hit_EM  = False
-            self.calo_hit_HAD = False
 
 
             
@@ -197,8 +156,6 @@ class Particle():
         Hide the particle
         """
         
-        if self.particle in self.particle_group.controllers:
-            self.particle_group.unbind_controller(self.particle)
 
 
             
