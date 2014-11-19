@@ -186,7 +186,7 @@ class Cell():
 
         ## Instantiate openGL list to be compiled
         self.display_list = glGenLists(1)
-        glNewList(self.display_list,GL_COMPILE)
+        glNewList(self.display_list, GL_COMPILE)
         glBegin(GL_QUADS)
 
         ## Top
@@ -236,6 +236,14 @@ class Cell():
         glVertex3f( self.inner_3[0], self.inner_3[1], self.inner_3[2] )
 
         glEnd()
+
+        glLineWidth(3)
+        glBegin(GL_LINES)
+        glVertex3f( 0, 0, 0 )
+        glColor4f( 0, 0, 0, 0.0 )
+        glVertex3f( self.outer_1[0], self.outer_1[1], self.outer_1[2] )
+        glEnd()
+
         glEndList()
 
         

@@ -238,13 +238,14 @@ class Display(pyglet.window.Window):
                     
                     ## Prepare for new event, remove particles from old event
                     for particle in self.particles:
-                        particle.hide()
+                        particle.delete()
 
                     self.particles = new_particles
 
                     ## Remove calorimeter energy
                     for calo in self.calorimeters:
                         calo.reset()
+                        calo.energize(self.particles)
 
                     ## Print out event information to terminal
                     self.reader.print_event()
@@ -334,13 +335,15 @@ class Display(pyglet.window.Window):
 
                     ## Prepare for new event, remove particles from old event
                     for particle in self.particles:
-                        particle.hide()
+                        particle.delete()
 # 
                     self.particles = []
                     
                     ## Remove calorimeter energy
                     for calo in self.calorimeters:
                         calo.reset()
+                        calo.energize(self.particles)
+                        
                 
                     ## Select a random event that passes the cut, print and display
                     self.particles = self.reader.random()
@@ -439,27 +442,6 @@ class Display(pyglet.window.Window):
         if self.beam.incoming:
             self.beam.update(dt)
 
-        ## Determine what to display after beam collision
-        if not self.beam.incoming:
-            ## Light up calorimeter cells when displayed particles hit
-            if self.allow_calo_update:
-                all_hit = True
-                for particle in self.particles:
-                    particle.show()
-                    if not particle.calo_hit_EM and not particle.calo_hit_HAD:
-                        all_hit = False
-                ## As long as not all particles hit the calorimeter, keep
-                ## recompiling openGL primitives (CPU intensive)
-                if not all_hit:
-                    for calo in self.calorimeters:
-                        calo.energize(self.particles)
-                else:
-                    self.allow_calo_update = False
-
-        ## Update particles
-        for particle in self.particles:
-            particle.update(dt)
-
         ## Update calorimeters
         for calo in self.calorimeters:
             calo.update(dt)
@@ -509,13 +491,17 @@ class Display(pyglet.window.Window):
         theta_calo, phi_calo = utils.sphy_to_sphz(theta_camera, phi_camera) 
         if phi_camera > 0:
             theta_camera = -theta_camera
-        
+
         ## Draw calorimeters
         for calo in self.calorimeters:
             calo.theta_camera = theta_calo
             calo.r_camera = self.zoom
             calo.phi_camera = theta_camera - math.pi/2
             calo.draw()
+
+        ## Draw particles
+        for particle in self.particles:
+            particle.draw()
 
         ## Draw the 2D scene, delegate to interface
         self.mode_2D()

@@ -28,7 +28,6 @@
 #############################################################################
 
 ## Pyglet imports
-from pyglet import image
 from pyglet.gl import *
 
 ## Basic python imports
@@ -55,107 +54,28 @@ class Particle():
         self.eta = eta
         self.phi = phi
 
+        ## Particle Color
+        self.color = color
+
         ## Does the particle interact with EM and/or HAD calorimeters?
         self.isEM  = isEM
         self.isHAD = isHAD
 
+        ## Other prooerties
+        self.is_min_ion = is_min_ion
+        self.wide       = wide
+
         ## Time sensitive indicators for particle travel animation and
         ## calorimeter animation
-        self.r   = 0.0
-        self.is_travelling = False
-        self.calo_hit_EM = False
-        self.calo_hit_HAD = False
+        self.calo_hit_EM = True
+        self.calo_hit_HAD = True
 
         ## Does the particle pass through the calorimeters?
         self.is_min_ion = is_min_ion
 
-        
+        self.display_list = None
 
-        ## Particle domain geometry ##
-        #----------------------------#
-        
-        ## If the particle is minimum-ionizing, make it cross the calorimeter
-        if self.is_min_ion:
-            self.end_r = 3*em_inner_radius
-            ## Change the endcap boundary
-            em_inner_z = 3*(1.0 - em_endcap_thickness/2)*eta_to_z((em_outer_radius, em_max_abs_eta))
-
-        ## If the particle is not mimimum-ionizing, set the boundaries to the interior of the
-        ## EM calorimeter
-        else:
-            self.end_r = em_inner_radius
-            em_inner_z = (1.0 - em_endcap_thickness/2)*eta_to_z((em_outer_radius, em_max_abs_eta))
-
-        ## Calculate the cartesian coordinate of the particle to know 
-        ## if it ends up in the barrel or in the endcap
-        cartesian_endpoint = rap_to_cart((em_inner_radius, self.eta, self.phi))
-
-        ## Check that z is above em endcap
-        self.in_endcap = False
-            
-        ## Identify if the particle ends up in the barrel region,
-        ## Change the endpoint radial distance accordingly
-        if abs(cartesian_endpoint[2]) >= em_inner_z:
-            self.in_endcap = True
-            self.end_r = (em_inner_z/abs(cartesian_endpoint[2]))*em_inner_radius
-
-        ## Calculate the new cartesian endpoint
-        cartesian_endpoint = rap_to_cart((self.r, self.eta, self.phi))
-
-
-
-        ## Particle display properties ##
-        #-------------------------------#
-
-        ## Calculate rate of apparition of wisps that form the particle
-        ## Uniform filling independent of the length of the particle domain
-        rate = (3.0/5)*particle_filling+(2.0/5)*particle_filling*abs(self.eta)
-        if self.is_min_ion:
-            rate *= 4
-
-        ## particle beam width
-        width =(0.05,0.05,0.0)
-        if wide:
-            width =(0.5,0.5,0.0)
-
-        
-
-    ## --------------------------------------- ##
-    def show(self):
-        """
-        Show the particle (initiate animation)
-        """
-
-
-            
-    ## --------------------------------------- ##
-    def update(self, dt):
-        """
-        Animate the particle
-        """
-
-        ## Elongate particle domain as long as it hasn't reached its destination
-        if self.is_travelling:
-            if self.r < self.end_r:
-                if self.is_min_ion:
-                    self.r += 3*particle_speed*math.log(self.pt/1000.0 + 1.0)
-                else:
-                    self.r += particle_speed*math.log(self.pt/1000.0 + 1.0)
-
-            ## If the particle reached its destination, stop animation
-            else:
-                self.is_travelling = False
-                self.r = self.end_r
-            self.particle_line.end_point = rap_to_cart((self.r, self.eta, self.phi))
-
-
-            
-    ## --------------------------------------- ##
-    def hide(self):
-        """
-        Hide the particle
-        """
-        
+        self.build()
 
 
             
@@ -186,3 +106,114 @@ class Particle():
         """
         
         return delta_phi(self.phi, cell.phi_center)
+
+
+
+    ## --------------------------------------- ##
+    def build(self):
+        """
+        Make the OpenGL line from the corner cartesian coordinates and
+        compile
+        """
+
+        ## Particle domain geometry ##
+        #----------------------------#
+        
+        ## If the particle is minimum-ionizing, make it cross the calorimeter
+        if self.is_min_ion:
+            self.r = 3*em_inner_radius
+            ## Change the endcap boundary
+            em_inner_z = 3*(1.0 - em_endcap_thickness/2)*eta_to_z((em_outer_radius, em_max_abs_eta))
+
+        ## If the particle is not mimimum-ionizing, set the boundaries to the interior of the
+        ## EM calorimeter
+        else:
+            self.r = em_inner_radius
+            em_inner_z = (1.0 - em_endcap_thickness/2)*eta_to_z((em_outer_radius, em_max_abs_eta))
+
+        ## Calculate the cartesian coordinate of the particle to know 
+        ## if it ends up in the barrel or in the endcap
+        cartesian_endpoint = rap_to_cart((em_inner_radius, self.eta, self.phi))
+
+        ## Check that z is above em endcap
+        self.in_endcap = False
+
+        ## width
+        width = 3
+        if self.wide:
+            width = 15
+            
+        ## Identify if the particle ends up in the barrel region,
+        ## Change the endpoint radial distance accordingly
+        if abs(cartesian_endpoint[2]) >= em_inner_z:
+            self.in_endcap = True
+            self.r = (em_inner_z/abs(cartesian_endpoint[2]))*em_inner_radius
+
+        ## Calculate the new cartesian endpoint
+        self.cartesian_endpoint = rap_to_cart((self.r, self.eta, self.phi))
+
+        ## Instantiate openGL list to be compiled
+        self.display_list = glGenLists(1)
+        glNewList(self.display_list, GL_COMPILE)
+
+        glLineWidth(width)
+
+        glBegin(GL_LINES)
+        glColor4f( self.color[0], self.color[1], self.color[2], 1.0)
+        glVertex3f( 0.0, 0.0, 0.0 )
+        glColor4f( self.color[0], self.color[1], self.color[2], 0.8)
+        glVertex3f( self.cartesian_endpoint[0], self.cartesian_endpoint[1], self.cartesian_endpoint[2] )
+        glEnd()
+
+        if self.wide:
+            glLineWidth(width-3)
+
+            glBegin(GL_LINES)
+            glColor4f( self.color[0], self.color[1], self.color[2], 1.0)
+            glVertex3f( 0.0, 0.0, 0.0 )
+            glColor4f( self.color[0], self.color[1], self.color[2], 0.8)
+            glVertex3f( self.cartesian_endpoint[0], self.cartesian_endpoint[1], self.cartesian_endpoint[2] )
+            glEnd()
+
+            glLineWidth(width-6)
+
+            glBegin(GL_LINES)
+            glColor4f( self.color[0], self.color[1], self.color[2], 1.0)
+            glVertex3f( 0.0, 0.0, 0.0 )
+            glColor4f( self.color[0], self.color[1], self.color[2], 0.8)
+            glVertex3f( self.cartesian_endpoint[0], self.cartesian_endpoint[1], self.cartesian_endpoint[2] )
+            glEnd()
+
+            glLineWidth(width-9)
+
+            glBegin(GL_LINES)
+            glColor4f( self.color[0], self.color[1], self.color[2], 1.0)
+            glVertex3f( 0.0, 0.0, 0.0 )
+            glColor4f( self.color[0], self.color[1], self.color[2], 0.8)
+            glVertex3f( self.cartesian_endpoint[0], self.cartesian_endpoint[1], self.cartesian_endpoint[2] )
+            glEnd()
+
+
+        glEndList()
+
+
+
+
+    ## --------------------------------------- ##
+    def draw(self):
+        """
+        draws the particle
+        """
+
+        glCallList(self.display_list)
+
+
+
+
+    ## --------------------------------------- ##
+    def delete(self):
+        """
+        Clear the display list from OpenGL
+        """
+
+        glDeleteLists(self.display_list, 1)

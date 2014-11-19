@@ -122,8 +122,7 @@ class Calorimeter():
         for particle in particles:
 
             ## Check that the particle hasn't hit the calorimeters it affects yet
-            if not particle.is_travelling and \
-              (not (particle.calo_hit_EM and self.calo_type == CALO_EM) or \
+            if (not (particle.calo_hit_EM and self.calo_type == CALO_EM) or \
               not (particle.calo_hit_HAD and self.calo_type == CALO_HAD)):
 
                 ## Cells to be modified by the current particle
