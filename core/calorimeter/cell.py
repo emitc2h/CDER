@@ -237,13 +237,6 @@ class Cell():
 
         glEnd()
 
-        glLineWidth(3)
-        glBegin(GL_LINES)
-        glVertex3f( 0, 0, 0 )
-        glColor4f( 0, 0, 0, 0.0 )
-        glVertex3f( self.outer_1[0], self.outer_1[1], self.outer_1[2] )
-        glEnd()
-
         glEndList()
 
         
