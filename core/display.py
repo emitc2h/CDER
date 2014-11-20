@@ -80,10 +80,6 @@ class Display(pyglet.window.Window):
 
         ## 2D objects
         self.interface = Interface(self.width, self.height)
-        
-        ## input ROOT file management
-        self.reader = reader_module.Custom_Reader(config.filename,
-                                                  config.treename)
 
         ## Control when to allow modification of calorimeter openGL primitives
         self.allow_calo_update = False
@@ -97,6 +93,15 @@ class Display(pyglet.window.Window):
 
         ## pyglet time control
         pyglet.clock.schedule_interval(self.update, 1.0/self.refresh_rate)
+
+        ## input ROOT file management
+        if not config.cut:
+            self.reader = reader_module.Custom_Reader(config.filename,
+                                                      config.treename)
+        else:
+            self.reader = reader_module.Custom_Reader(config.filename,
+                                                      config.treename,
+                                                      initial_cut_string=config.cut)
 
     
 

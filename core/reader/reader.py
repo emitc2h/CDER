@@ -50,7 +50,7 @@ CUT_NO_SELECTION = 'No selection'
 class Reader():
 
     ## --------------------------------------- ##
-    def __init__(self, file_path, tree_name):
+    def __init__(self, file_path, tree_name, initial_cut_string=CUT_NO_SELECTION):
         """
         Constructor
         """
@@ -74,7 +74,7 @@ class Reader():
         self.event = -1
 
         ## Cuts
-        self.current_cut = CUT_NO_SELECTION
+        self.current_cut = initial_cut_string
         self.history = []
 
         ## Particles to display
@@ -93,6 +93,14 @@ class Reader():
 
         ## Set teminal height for nice output
         self.terminal_adjust_height = 1
+
+        if not (initial_cut_string == CUT_NO_SELECTION):
+            print 'Applying cut string from config.ini:', initial_cut_string
+            print 'Please wait ...'
+            if self.cut(initial_cut_string):
+                print 'Successful.'
+            else:
+                print 'There is something wrong with the provided cut string. Please check.'
 
 
 

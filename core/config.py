@@ -39,6 +39,7 @@ Input File
 filename   = conf.get('InputFile', 'filename')
 treename   = conf.get('InputFile', 'treename')
 filereader = conf.get('InputFile', 'filereader')
+cut        = conf.get('InputFile', 'cut')
 
 
 """
