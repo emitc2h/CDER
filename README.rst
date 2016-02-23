@@ -20,6 +20,18 @@
 .. image:: https://bitbucket.org/emitc2h/cder/raw/5f70f7b0e5362fef614f5abd90f326fc2854306f/core/images/logo.png
    :scale: 25
 
+Update
+------
+
+The latest version of CDER does not require py-lepton, as the library
+has not been adapted to 64bit environments. Launch with
+
+    python CDER.py
+
+just like any other python script. This new version is intended to be
+architecture-indpendent. Let me know if you run into bugs.
+
+
 What is CDER?
 -------------
 
